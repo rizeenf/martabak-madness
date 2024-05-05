@@ -5,7 +5,6 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import AuthProvider from "@/components/AuthProvider";
 import QueryProvider from "@/components/QueryProvider";
-import {ToastContainer} from "react-toastify"
 import { Toaster}from "sonner"
 
 const poppins = Poppins({
