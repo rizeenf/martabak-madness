@@ -32,6 +32,17 @@ export type OrderType = {
   status: string;
   createdAt: Date;
   intent_id?: string;
+  user: User
+}
+
+export type User = {
+  id: String
+  name: String
+  email: String
+  emailVerified: String
+  image: String
+  isAdmin: Boolean
+
 }
 
 export type CartItemType = {

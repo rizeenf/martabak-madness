@@ -9,6 +9,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from 'sonner'
 import Loading from "@/app/loading";
 import { cn } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const Orders = () => {
   const { data: session, status } = useSession();
@@ -45,8 +46,8 @@ const Orders = () => {
     }
   })
 
-  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setSelectedValue(e.target.value);
+  const handleChange = (e: string) => {
+    setSelectedValue(e);
   }
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>, id: string) => {
@@ -73,27 +74,38 @@ const Orders = () => {
           <tr className="border-b border-amber-100">
             <th>Order ID</th>
             <th>Date</th>
-            <th>Price</th>
+            <th>Name</th>
             <th>Products</th>
+            <th>Price</th>
             <th>Status</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody className="border-b border-r ">
           {data.length > 0 && data?.map((item: OrderType) => (
             <tr key={item.id} className={cn(`border-b border-amber-100 align-items-center py-2`, item.status.toLowerCase() != 'delivered' && 'bg-red-100')}>
-              <td>{item.id}</td>
+              <td className="line-clamp-1 max-w-32 items-center">{item.id}</td>
               <td>{item.createdAt.toString().slice(0, 10)} {`${item.createdAt.toString().slice(11, 13)}:${item.createdAt.toString().slice(14, 16)}`}</td>
-              <td>{item.price}</td>
+              <td>{item.user.name}</td>
               <td>{item.products[0].title}{item.products[1] ? `, ${item.products[1].title}` : ''}</td>
-              {/* <td>'test Date'</td> */}
-              <td>
+              <td>{item.price}</td>
+              <td className="min-w-44">
                 {
                   session?.user?.isAdmin ? (
-                    <form onSubmit={(e) => handleSubmit(e, item.id)} >
-                      <select defaultValue={item.status} onChange={handleChange}>
+                    <form onSubmit={(e) => handleSubmit(e, item.id)} className="flex items-center justify-around">
+                      <Select onValueChange={handleChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder={item.status} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Prepared">Prepared</SelectItem>
+                          <SelectItem value="On Delivery">On Delivery</SelectItem>
+                          <SelectItem value="Delivered">Delivered</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {/* <select defaultValue={item.status} onChange={handleChange} >
                         <option value={"Prepared"}>Prepared</option>
                         <option value={"Delivered"}>Delivered</option>
-                      </select>
+                      </select> */}
                       <Button type="submit" size={"sm"} variant={"default"}>Save</Button>
                     </form>
                   )

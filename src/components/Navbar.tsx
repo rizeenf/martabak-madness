@@ -9,6 +9,7 @@ import Cart from "./Cart";
 import LeftNavbar from "./LeftNavbar";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Button } from "./ui/button";
+import Loading from "@/app/loading";
 
 const Navbar = () => {
   const { data, status } = useSession();
@@ -20,21 +21,26 @@ const Navbar = () => {
       toast.warning('Logout successfully')
       setTimeout(async () => {
         await signOut()
+
+        return <Loading />
       }, 500)
     }
 
     if (pathname !== '/') {
-      router.push('/')
-      toast.warning('Logout successfully')
+      // router.push('/')
       setTimeout(async () => {
         await signOut()
+        toast.warning('Logout successfully')
+
+        return <Loading />
       }, 3000)
     }
 
   }
 
   const handleLogin = () => {
-    signIn('google');
+    // signIn('google');
+    router.push('/login')
   }
 
   console.log({ pathname })
