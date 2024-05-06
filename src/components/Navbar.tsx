@@ -1,17 +1,43 @@
 "use client";
 import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
+import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { toast } from "sonner";
 import Cart from "./Cart";
 import LeftNavbar from "./LeftNavbar";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Button } from "./ui/button";
-import Image from "next/image";
-import { signIn, signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
   const { data, status } = useSession();
+  const router = useRouter();
+  const pathname = usePathname()
 
+  const handleLogout = () => {
+    if (pathname == '/') {
+      toast.warning('Logout successfully')
+      setTimeout(async () => {
+        await signOut()
+      }, 500)
+    }
+
+    if (pathname !== '/') {
+      router.push('/')
+      toast.warning('Logout successfully')
+      setTimeout(async () => {
+        await signOut()
+      }, 3000)
+    }
+
+  }
+
+  const handleLogin = () => {
+    signIn('google');
+  }
+
+  console.log({ pathname })
   return (
     <div className="h-12 bg-amber-900 z-40 text-white">
       <MaxWidthWrapper className="h-12">
@@ -36,7 +62,7 @@ const Navbar = () => {
                 </Button>
                 <span className="w-px hidden sm:flex h-5 bg-amber-700" />
                 <Button
-                  onClick={() => signOut()}
+                  onClick={handleLogout}
                   className={cn(navigationMenuTriggerStyle(), "bg-amber-900 ")}
                 >
                   Logout
@@ -44,7 +70,7 @@ const Navbar = () => {
               </>
             ) : (
               <Button
-                onClick={() => signIn("google")}
+                  onClick={handleLogin}
                 className={cn(navigationMenuTriggerStyle(), "bg-amber-900 ")}
               >
                 Login

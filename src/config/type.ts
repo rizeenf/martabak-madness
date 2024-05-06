@@ -4,7 +4,13 @@ export type Product = {
   desc?: string;
   img?: string;
   price: number;
-  options?: { title: string; additionalPrice: number }[];
+  options?: ProductOptions[];
+};
+
+export type ProductOptions = {
+  type: string;
+  additionalPrice: number
+  productId?: string;
 };
 
 export type Products = Product[];
@@ -46,15 +52,15 @@ export const MARTABAK_MANIS: Products = [
     price: 35000,
     options: [
       {
-        title: "Kecil",
+        type: "Kecil",
         additionalPrice: 0,
       },
       {
-        title: "Sedang",
+        type: "Sedang",
         additionalPrice: 4000,
       },
       {
-        title: "Besar",
+        type: "Besar",
         additionalPrice: 6000,
       },
     ],
@@ -67,15 +73,15 @@ export const MARTABAK_MANIS: Products = [
     price: 35000,
     options: [
       {
-        title: "Kecil",
+        type: "Kecil",
         additionalPrice: 0,
       },
       {
-        title: "Sedang",
+        type: "Sedang",
         additionalPrice: 4000,
       },
       {
-        title: "Besar",
+        type: "Besar",
         additionalPrice: 6000,
       },
     ],
@@ -88,15 +94,15 @@ export const MARTABAK_MANIS: Products = [
     price: 35000,
     options: [
       {
-        title: "Kecil",
+        type: "Kecil",
         additionalPrice: 0,
       },
       {
-        title: "Sedang",
+        type: "Sedang",
         additionalPrice: 4000,
       },
       {
-        title: "Besar",
+        type: "Besar",
         additionalPrice: 6000,
       },
     ],
@@ -111,15 +117,15 @@ export const MARTABAK_TELOR: Products = [
     price: 35000,
     options: [
       {
-        title: "Kecil",
+        type: "Kecil",
         additionalPrice: 0,
       },
       {
-        title: "Sedang",
+        type: "Sedang",
         additionalPrice: 4000,
       },
       {
-        title: "Besar",
+        type: "Besar",
         additionalPrice: 6000,
       },
     ],
@@ -132,15 +138,15 @@ export const MARTABAK_TELOR: Products = [
     price: 35000,
     options: [
       {
-        title: "Kecil",
+        type: "Kecil",
         additionalPrice: 0,
       },
       {
-        title: "Sedang",
+        type: "Sedang",
         additionalPrice: 4000,
       },
       {
-        title: "Besar",
+        type: "Besar",
         additionalPrice: 6000,
       },
     ],
@@ -153,15 +159,15 @@ export const MARTABAK_TELOR: Products = [
     price: 35000,
     options: [
       {
-        title: "Kecil",
+        type: "Kecil",
         additionalPrice: 0,
       },
       {
-        title: "Sedang",
+        type: "Sedang",
         additionalPrice: 4000,
       },
       {
-        title: "Besar",
+        type: "Besar",
         additionalPrice: 6000,
       },
     ],
@@ -176,15 +182,15 @@ export const MARTABAK_KERING: Products = [
     price: 35000,
     options: [
       {
-        title: "Kecil",
+        type: "Kecil",
         additionalPrice: 0,
       },
       {
-        title: "Sedang",
+        type: "Sedang",
         additionalPrice: 4000,
       },
       {
-        title: "Besar",
+        type: "Besar",
         additionalPrice: 6000,
       },
     ],
@@ -197,15 +203,15 @@ export const MARTABAK_KERING: Products = [
     price: 35000,
     options: [
       {
-        title: "Kecil",
+        type: "Kecil",
         additionalPrice: 0,
       },
       {
-        title: "Sedang",
+        type: "Sedang",
         additionalPrice: 4000,
       },
       {
-        title: "Besar",
+        type: "Besar",
         additionalPrice: 6000,
       },
     ],
@@ -218,15 +224,15 @@ export const MARTABAK_KERING: Products = [
     price: 35000,
     options: [
       {
-        title: "Kecil",
+        type: "Kecil",
         additionalPrice: 0,
       },
       {
-        title: "Sedang",
+        type: "Sedang",
         additionalPrice: 4000,
       },
       {
-        title: "Besar",
+        type: "Besar",
         additionalPrice: 6000,
       },
     ],
@@ -241,15 +247,15 @@ export const singleProduct: Product = {
   price: 30000,
   options: [
     {
-      title: "Kecil",
+      type: "Kecil",
       additionalPrice: 0,
     },
     {
-      title: "Sedang",
+      type: "Sedang",
       additionalPrice: 4000,
     },
     {
-      title: "Besar",
+      type: "Besar",
       additionalPrice: 6000,
     },
   ],

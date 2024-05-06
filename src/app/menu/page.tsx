@@ -24,7 +24,6 @@ const fetchData = async () => {
 
 const Menu = async () => {
   const menu: MenuType = await fetchData();
-  // const menu: MenuType = await useFetchServer("categories");
 
   return (
     <MaxWidthWrapper className="min-h-screen h-full flex items-center justify-center">

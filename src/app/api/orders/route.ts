@@ -8,7 +8,14 @@ export const GET = async (req: NextRequest) => {
   try {
     if (session) {
       if (session.user.isAdmin) {
-        const orders = await prisma.order.findMany();
+        const orders = await prisma.order.findMany({
+          include: {
+            user: true,
+          },
+          orderBy: {
+            createdAt: "desc"
+          }
+        });
         return new NextResponse(JSON.stringify(orders), { status: 200 });
       }
 
@@ -16,6 +23,12 @@ export const GET = async (req: NextRequest) => {
         where: {
           userEmail: session.user.email!,
         },
+        include: {
+          user: true,
+        },
+        orderBy: {
+          createdAt: "desc"
+        }
       });
       return new NextResponse(JSON.stringify(orders), { status: 200 });
     } else {

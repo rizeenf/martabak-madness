@@ -49,6 +49,7 @@ model Order {
   intent_id String?        @unique
   user      User           @relation(fields: [userEmail], references: [email])
   userEmail String
+  productId String?
 }
 
 model Account {

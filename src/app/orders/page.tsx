@@ -5,12 +5,15 @@ import { OrderType } from "@/config/type";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { FormEvent } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { toast } from 'sonner'
+import Loading from "@/app/loading";
+import { cn } from "@/lib/utils";
 
 const Orders = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [selectedValue, setSelectedValue] = useState('');
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["orders"],
@@ -38,25 +41,30 @@ const Orders = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["orders"] })
+      toast.success('Success updating status.')
     }
   })
-  
+
+  const handleChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    setSelectedValue(e.target.value);
+  }
+
   const handleSubmit = (e: FormEvent<HTMLFormElement>, id: string) => {
     e.preventDefault()
-    
-    const form = e.target as HTMLFormElement
-    const input = form.elements[0] as HTMLInputElement
-    const status = input.value
-    
+
     mutation.mutate({
       id: id,
-      status: status
+      status: selectedValue!
+    }, {
+      onError: (error) => {
+        console.error('Failed to update status:', error);
+        toast.error('Failed updating status.');
+      }
     })
-    toast.success('Success updating status.') 
   }
   console.log({ data });
 
-  if (isLoading || status === "loading") return <div>Loading...</div>;
+  if (isLoading || status === "loading") return <Loading />;
 
   return (
     <MaxWidthWrapper>
@@ -71,18 +79,21 @@ const Orders = () => {
           </tr>
         </thead>
         <tbody>
-          {data.map((item: OrderType) => (
-            <tr key={item.id} className={`border-b border-amber-100 ${item.status.toLowerCase() != 'delivered' && 'bg-red-100'} align-items-center py-2`}>
+          {data.length > 0 && data?.map((item: OrderType) => (
+            <tr key={item.id} className={cn(`border-b border-amber-100 align-items-center py-2`, item.status.toLowerCase() != 'delivered' && 'bg-red-100')}>
               <td>{item.id}</td>
               <td>{item.createdAt.toString().slice(0, 10)} {`${item.createdAt.toString().slice(11, 13)}:${item.createdAt.toString().slice(14, 16)}`}</td>
               <td>{item.price}</td>
-              <td>{item.products[0].title}</td>
+              <td>{item.products[0].title}{item.products[1] ? `, ${item.products[1].title}` : ''}</td>
               {/* <td>'test Date'</td> */}
               <td>
                 {
-                  session?.user.isAdmin ? (
+                  session?.user?.isAdmin ? (
                     <form onSubmit={(e) => handleSubmit(e, item.id)} >
-                      <input type="text" name="status" placeholder={item.status} className="m-1 pl-2 ring-1 ring-red-100 rounded-md" />
+                      <select defaultValue={item.status} onChange={handleChange}>
+                        <option value={"Prepared"}>Prepared</option>
+                        <option value={"Delivered"}>Delivered</option>
+                      </select>
                       <Button type="submit" size={"sm"} variant={"default"}>Save</Button>
                     </form>
                   )

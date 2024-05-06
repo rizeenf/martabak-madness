@@ -1,6 +1,9 @@
+'use client'
+import Loading from "@/app/loading";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Button } from "@/components/ui/button";
 import { singleProduct } from "@/config/type";
+import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import React from "react";
 type ParamsProps = {
@@ -12,28 +15,42 @@ type ParamsProps = {
 const ProductId = ({ params }: ParamsProps) => {
   const { productId } = params;
 
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["products"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/products/${productId}`)
+        .then((res) =>
+          res.json()
+        ),
+  });
+
+  console.log({ productId })
+  console.log({ data })
+
+  if (isLoading) return <Loading />;
+
   return (
     <MaxWidthWrapper className="flex h-screen justify-center items-center">
       <div className="flex flex-row mt-10">
         <div className="left flex flex-1">
-          {singleProduct.img && (
+          {data.img && (
             <Image
-              src={singleProduct.img}
-              alt={singleProduct.title}
+              src={data.img}
+              alt={data.title}
               width={400}
               height={400}
             />
           )}
         </div>
         <div className="right flex flex-col flex-1 w-full">
-          <h1 className="text-4xl font-semibold">{singleProduct.title}</h1>
-          <p>{singleProduct.desc}</p>
-          <h3 className="font-semibold text-xl">{singleProduct.price}</h3>
+          <h1 className="text-4xl font-semibold">{data.title}</h1>
+          <p>{data.desc}</p>
+          <h3 className="font-semibold text-xl">{data.price}</h3>
           <div className="flex flex-row gap-5">
-            {singleProduct.options?.map((item) => (
-              <div key={item.title} className="p-2 ">
-                <Button className="font-semibold bg-amber-900">
-                  {item.title}
+            {data?.options?.map((item: any) => (
+              <div key={item.type} className="p-2 ">
+                <Button className="font-semibold bg-amber-900 capitalize">
+                  {item.type}
                 </Button>
               </div>
             ))}
