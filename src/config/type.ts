@@ -54,6 +54,56 @@ export type CartItemType = {
   quantity: number
 }
 
+
+export type CartType = {
+  products: CartItemType[],
+  totalItems: number,
+  totalPrice: number,
+}
+
+export type ActionType = {
+  addToCart: (item: CartItemType) => void
+  removeFromCart: (item: CartItemType) => void
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const MARTABAK_MANIS: Products = [
   {
     id: "73a391f6-5e99-451a-ba90-9221d22ed8f3",

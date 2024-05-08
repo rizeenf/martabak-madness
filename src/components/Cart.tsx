@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import {
   Sheet,
@@ -13,26 +14,34 @@ import { cn, formatPrice } from "@/lib/utils";
 import { Separator } from "./ui/separator";
 import Link from "next/link";
 import { buttonVariants } from "./ui/button";
+import { useCartStore } from "@/utils/store";
+import CartItem from "./CartItem";
 
 const Cart = () => {
-  const totalItem = 10;
+  // const totalItems = 10;
+
+  const { products, totalItems, totalPrice, removeFromCart } = useCartStore()
 
   return (
     <Sheet>
       <SheetTrigger className="group flex sm:flex flex-row justify-center items-center gap-1">
         <ShoppingCart className="h-5 w-5 flex-shrink-0 group-hover:opacity-80" />
-        <span className="text-xs group-hover:opacity-80">0</span>
+        <span className="text-xs group-hover:opacity-80">{totalItems}</span>
       </SheetTrigger>
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Cart ({totalItem}) </SheetTitle>
+          <SheetTitle>Cart ({totalItems}) </SheetTitle>
         </SheetHeader>
 
-        {totalItem > 0 ? (
+        {totalItems > 0 ? (
           <>
             <div className="flex w-full flex-col">
               {/* TODO: CART ITEMS */}
-              <ScrollArea className="h-[calc(100svh-190px)] w-full"></ScrollArea>
+              <ScrollArea className="h-[calc(100svh-190px)] w-full">
+                {products.map((product, idx) => (
+                  <CartItem product={product} key={idx} />
+                ))}
+              </ScrollArea>
             </div>
             <div className="w-full text-sm my-2">
               <Separator />
@@ -42,11 +51,11 @@ const Cart = () => {
               </div>
               <div className="flex">
                 <span className="flex-1">Transaction Fee</span>
-                {formatPrice(0)}
+                {formatPrice(1000)}
               </div>
               <div className="flex">
                 <span className="flex-1">Total</span>
-                {formatPrice(1 + 0)}
+                {formatPrice(totalPrice + 1000)}
               </div>
               <Separator />
             </div>
