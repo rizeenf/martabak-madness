@@ -15,18 +15,70 @@ export const useCartStore = create<CartType & ActionType>()(
       totalItems: INITIAL_STATE.totalItems,
       totalPrice: INITIAL_STATE.totalPrice,
       addToCart(item) {
-        set((prev) => ({
-          products: [...prev.products, item],
-          totalItems: prev.totalItems + item.quantity,
-          totalPrice: prev.totalPrice + (item.price * item.quantity)
-        }))
+        set((prev) => {
+          const duplicateItemIndex = prev.products.findIndex((x) => item.id === x.id);
+
+          if (duplicateItemIndex !== -1) {
+            // If a duplicate item is found, update its quantity
+            const updatedProducts = prev.products.map((product, index) => {
+              if (index === duplicateItemIndex) {
+                // Update the quantity of the duplicate item
+                return {
+                  ...product,
+                  quantity: product.quantity + item.quantity
+                };
+              }
+              return product;
+            });
+
+            return {
+              products: updatedProducts,
+              totalItems: prev.totalItems,
+              totalPrice: prev.totalPrice + (item.price * item.quantity)
+            };
+          } else {
+            // If no duplicate item is found, add the new item to the cart
+            return {
+              products: [...prev.products, item],
+              totalItems: prev.totalItems + 1,
+              totalPrice: prev.totalPrice + (item.price * item.quantity)
+            };
+          }
+          // const duplicateItems = prev.products.find((x) => item.id == x.id)
+
+          // if (duplicateItems){
+          //   return {
+          //     products: [...prev.products, { quantity: duplicateItems.quantity + item.quantity}]
+          //   }
+          // }
+          // return {
+          //   products: [...prev.products, item],
+          //   totalItems: prev.totalItems + item.quantity,
+          //   totalPrice: prev.totalPrice + (item.price * item.quantity)
+          // }
+        })
       },
       removeFromCart(item) {
-        set((prev) => ({
-          products: prev.products.filter((prod) => prod.id !== item.id),
-          totalItems: prev.totalItems - item.quantity,
-          totalPrice: prev.totalPrice - (item.price * item.quantity)
-        }))
+        set((prev) => {
+          const removedItem = prev.products.find((product) => product.id === item.id)
+
+          const updatedProducts = prev.products.filter((prod) => prod.id !== item.id)
+
+
+          let updatedTotalPrice = prev.totalPrice;
+          if (removedItem) {
+            updatedTotalPrice = updatedTotalPrice - (removedItem.price * removedItem.quantity)
+          }
+
+          // TO-DO FIX WHEN REMOVE
+          return {
+            products: updatedProducts,
+            totalItems: prev.totalItems - 1,
+            totalPrice: updatedTotalPrice
+          }
+
+        }
+        )
       },
     }), {
     name: "cart-storage",

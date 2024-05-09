@@ -1,25 +1,25 @@
 'use client'
-import { Product } from '@/config/type'
+import { CartItemType, Product } from '@/config/type'
 import { formatPrice } from '@/lib/utils'
 import { useCartStore } from '@/utils/store'
 import { ImageIcon, X } from 'lucide-react'
 import Image from 'next/image'
 import React from 'react'
 
-const CartItem = ({ product }: { product: Product }) => {
-  const { img } = product
+const CartItem = ({ product }: { product: CartItemType }) => {
+  const { image } = product
   const { removeFromCart } = useCartStore()
 
 
-  console.log(img)
+  console.log(image)
   return (
     <div className="space-y-3 py-2">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center space-x-4">
           <div className="relative aspect-square h-16 w-16 min-w-fit overflow-hidden rounded">
-            {img ? (
+            {image ? (
               <Image
-                src={img}
+                src={image}
                 alt={product.title}
                 fill
                 className="absolute object-cover"
@@ -38,8 +38,8 @@ const CartItem = ({ product }: { product: Product }) => {
             <span className="line-clamp-1 text-sm font-medium mb-1">
               {product.title}
             </span>
-            <span className="line-clamp-1 text-xs capitalize text-muted-foreground">
-              {product.desc}
+            <span className="line-clamp-1 text-xs text-muted-foreground">
+              {product.quantity} x {product.price}
             </span>
             <div className="mt-2 text-xs text-muted-foreground">
               <button
@@ -48,7 +48,7 @@ const CartItem = ({ product }: { product: Product }) => {
                   price: product.price,
                   quantity: 1,
                   title: product.title,
-                  image: product.img,
+                  image: product.image,
                 })}
                 className="flex items-center gap-1 group"
               >
