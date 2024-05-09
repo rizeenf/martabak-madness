@@ -7,20 +7,20 @@ import Link from "next/link";
 
 const sections = [
   {
-    title: "Kepuasan Martabak dalam Setiap Gigitan.",
-    imageSrc: "/images/martelor1.jpeg",
+    title: "Kepuasan dalam Setiap Gigitan.",
+    imageSrc: "/images/makanan/ayam-tepung.jpeg",
   },
   {
-    title: "Nikmatnya Martabak Setiap Waktu, Setiap Hari!",
-    imageSrc: "/images/martabak1.jpeg",
+    title: "Nikmatnya Makan Setiap Waktu, Setiap Hari!",
+    imageSrc: "/images/makanan/ikan-gurame.jpeg",
   },
   {
     title: "Rasa Kesenangan yang Menggugah Selera!",
-    imageSrc: "/images/martelor4.jpeg",
+    imageSrc: "/images/minuman/es-teh.jpeg",
   },
   {
-    title: "Jelajahi Kelezatan Martabak Tanpa Batas!",
-    imageSrc: "/images/martelor3.jpeg",
+    title: "Jelajahi Kelezatan Cemilan Tanpa Batas!",
+    imageSrc: "/images/cemilan/kebab.jpeg",
   },
 ];
 
