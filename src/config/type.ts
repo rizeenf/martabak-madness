@@ -15,13 +15,15 @@ export type ProductOptions = {
 
 export type Products = Product[];
 
+export type MenusType = MenuType[];
+
 export type MenuType = {
   id: string;
   slug: string;
   title: string;
   desc?: string;
   img?: string;
-}[];
+};
 
 
 export type OrderType = {

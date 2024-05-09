@@ -4,6 +4,7 @@ import { useCartStore } from '@/utils/store'
 import { useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import { toast } from 'sonner'
+import { formatPrice } from '@/lib/utils'
 
 const ProductPrice = ({ product }: { product: Product }) => {
   const { addToCart } = useCartStore()
@@ -52,7 +53,7 @@ const ProductPrice = ({ product }: { product: Product }) => {
     <div className="right flex flex-col flex-1 w-full">
       <h1 className="text-4xl font-semibold">{product.title}</h1>
       <p>{product.desc}</p>
-      <h3 className="font-semibold text-xl">{productPrice}</h3>
+      <h3 className="font-semibold text-xl">{formatPrice(productPrice)}</h3>
       <div className="flex flex-row gap-5">
         {product?.options?.map((item: ProductOptions, idx: number) => (
           <div key={item.type} className="p-2 ">

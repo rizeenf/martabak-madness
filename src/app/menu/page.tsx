@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { cn } from "@/lib/utils";
-import { MenuType } from "@/config/type";
+import { MenuType, MenusType } from "@/config/type";
 import { useFetchServer } from "@/hooks/useFetchServer";
 
 const fetchData = async () => {
@@ -23,7 +23,7 @@ const fetchData = async () => {
 };
 
 const Menu = async () => {
-  const menu: MenuType = await fetchData();
+  const menu: MenusType = await fetchData();
 
   return (
     <MaxWidthWrapper className="min-h-screen h-full flex items-center justify-center">

@@ -14,6 +14,8 @@ import Link from "next/link";
 import React from "react";
 import ListItem from "./ListItem";
 import { cn } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import { MenuType } from "@/config/type";
 
 const components: {
   title: string;
@@ -21,30 +23,41 @@ const components: {
   src: string;
   description: string;
 }[] = [
-  {
-    title: "Martabak Manis",
-    src: "/images/martabak1.jpeg",
-    href: "/menu/martabakmanis",
-    description:
-      "Nikmati Martabak Manis kami yang lezat, dengan lapisan tipis yang renyah dan penuh dengan berbagai pilihan topping manis seperti cokelat, keju, kacang, dan masih banyak lagi. Pesan sekarang dan rasakan kelezatannya!",
-  },
-  {
-    title: "Martabak Telor",
-    src: "/images/martelor1.jpeg",
-    href: "/menu/martabaktelor",
-    description:
-      "Sajian Martabak Telur kami adalah campuran sempurna dari telur, daging cincang, bawang, dan rempah-rempah yang disajikan dengan kulit tipis yang garing di luar dan lembut di dalam. Pesan sekarang dan nikmati sensasi gurihnya!",
-  },
-  {
-    title: "Martabak Kering",
-    src: "/images/markering1.jpeg",
-    href: "/menu/martabakkering",
-    description:
-      "Martabak Kering kami menghadirkan cita rasa khas Indonesia dengan adonan yang renyah dan isiannya yang lezat. Terdiri dari berbagai pilihan rasa tradisional seperti daging, keju, kacang, dan masih banyak lagi. Pesan sekarang dan rasakan kenikmatannya!",
-  },
-];
+    {
+      title: "Martabak Manis",
+      src: "/images/martabak1.jpeg",
+      href: "/menu/martabakmanis",
+      description:
+        "Nikmati Martabak Manis kami yang lezat, dengan lapisan tipis yang renyah dan penuh dengan berbagai pilihan topping manis seperti cokelat, keju, kacang, dan masih banyak lagi. Pesan sekarang dan rasakan kelezatannya!",
+    },
+    {
+      title: "Martabak Telor",
+      src: "/images/martelor1.jpeg",
+      href: "/menu/martabaktelor",
+      description:
+        "Sajian Martabak Telur kami adalah campuran sempurna dari telur, daging cincang, bawang, dan rempah-rempah yang disajikan dengan kulit tipis yang garing di luar dan lembut di dalam. Pesan sekarang dan nikmati sensasi gurihnya!",
+    },
+    {
+      title: "Martabak Kering",
+      src: "/images/markering1.jpeg",
+      href: "/menu/martabakkering",
+      description:
+        "Martabak Kering kami menghadirkan cita rasa khas Indonesia dengan adonan yang renyah dan isiannya yang lezat. Terdiri dari berbagai pilihan rasa tradisional seperti daging, keju, kacang, dan masih banyak lagi. Pesan sekarang dan rasakan kenikmatannya!",
+    },
+  ];
 
 const LeftNavbar = () => {
+  const { data, isLoading, error } = useQuery<MenuType[]>({
+    queryKey: ["categories"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/categories`).then((res) =>
+        res.json()
+      ),
+  });
+
+
+  console.log({ data })
+
   return (
     <NavigationMenu>
       <NavigationMenuList>
@@ -61,21 +74,22 @@ const LeftNavbar = () => {
                     href="/"
                   >
                     <Image
-                      src={"/images/martabak1.jpeg"}
+                      src={"/images/makanan/nasi-uduk.jpeg"}
                       alt="Martabak"
                       width={100}
                       height={100}
+                      className="aspect-square object-cover"
                     />
                     <div className="mb-2 mt-4 text-lg font-medium">
-                      MartabakMadness
+                      JualanMakanan
                     </div>
                     <p className="text-sm leading-tight text-muted-foreground line-clamp-6">
-                      MartabakMadness adalah destinasi utama Anda untuk
-                      menikmati dunia martabak yang lezat. Temukan beragam rasa
+                      JualanMakanan adalah destinasi utama Anda untuk
+                      menikmati dunia makanan yang lezat. Temukan beragam rasa
                       manis dan gurih, dengan berbagai pilihan topping yang
                       menggugah selera. Pesan dengan mudah melalui aplikasi
                       pengiriman makanan kami dan puaskan hasrat Anda akan
-                      makanan jalanan Indonesia yang terkenal ini.
+                      makanan Indonesia yang terkenal ini.
                     </p>
                   </Link>
                 </NavigationMenuLink>
@@ -99,25 +113,28 @@ const LeftNavbar = () => {
           </NavigationMenuTrigger>
           <NavigationMenuContent>
             <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px] ">
-              {components.map((component) => (
-                <li className="row-span-3" key={component.title}>
+              {data?.length && data?.map((item) => (
+                <li className="row-span-3" key={item.id}>
                   <NavigationMenuLink asChild>
                     <Link
                       className="flex h-full w-full select-none flex-col  rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                      href={component.href}
+                      href={item.slug}
                     >
-                      <Image
-                        src={component.src}
-                        alt="Martabak"
-                        width={150}
-                        height={150}
-                        className="rounded-sm"
-                      />
+                      <div className="relative aspect-square h-[10rem] w-[10rem] min-w-fit overflow-hidden rounded">
+                        {item.img &&
+                          <Image
+                          src={item.img}
+                          alt="Martabak"
+                          fill
+                          className="absolute object-cover"
+                        />
+                        }
+                      </div>
                       <div className="mb-2 mt-4 text-lg font-medium">
-                        {component.title}
+                        {item.title}
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground line-clamp-6">
-                        {component.description}
+                        {item.desc}
                       </p>
                     </Link>
                   </NavigationMenuLink>

@@ -36,14 +36,15 @@ const ProductId = async ({ params }: ParamsProps) => {
     <MaxWidthWrapper className="flex h-screen justify-center items-center">
       <div className="flex flex-row mt-10">
         <div className="left flex flex-1">
-          {product.img && (
-            <Image
-              src={product.img}
-              alt={product.title}
-              width={400}
-              height={400}
-            />
-          )}
+          <div className="relative aspect-square h-[30rem] w-[30rem] min-w-fit overflow-hidden rounded">
+            {product.img && (
+              <Image
+                src={product.img}
+                alt={product.title}
+                fill
+                className="absolute object-cover" />
+            )}
+          </div>
         </div>
         <ProductPrice product={product} />
       </div>

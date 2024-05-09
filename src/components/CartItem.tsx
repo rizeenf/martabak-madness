@@ -39,7 +39,7 @@ const CartItem = ({ product }: { product: CartItemType }) => {
               {product.title}
             </span>
             <span className="line-clamp-1 text-xs text-muted-foreground">
-              {product.quantity} x {product.price}
+              {product.quantity} x {formatPrice(product.price)}
             </span>
             <div className="mt-2 text-xs text-muted-foreground">
               <button
@@ -61,7 +61,7 @@ const CartItem = ({ product }: { product: CartItemType }) => {
 
         <div className="flex flex-col space-y-1 font-medium">
           <span className="ml-auto line-clamp-1 text-sm">
-            {formatPrice(product.price)}
+            {formatPrice(product.price * product.quantity)}
           </span>
         </div>
       </div>
