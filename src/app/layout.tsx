@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 import AuthProvider from "@/components/AuthProvider";
 import QueryProvider from "@/components/QueryProvider";
-import { Toaster}from "sonner"
+import { Toaster } from "sonner"
 
 const poppins = Poppins({
   weight: ["400", "700", "800"],
@@ -14,11 +14,11 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "MartabakMadness",
+  title: "Jualan Makanan",
   description:
-    "MartabakMadness is your ultimate destination for indulging in the delightful world of martabak. Discover a wide array of sweet and savory flavors, topped with an assortment of delectable ingredients. Order conveniently through our food delivery app and satisfy your cravings for this beloved Indonesian street food delicacy",
+    "JualanMakanan adalah destinasi utama Anda untuk    menikmati dunia makanan yang lezat. Temukan beragam rasa    manis dan gurih, dengan berbagai pilihan topping yang    menggugah selera. Pesan dengan mudah melalui aplikasi    pengiriman makanan kami dan puaskan hasrat Anda akan    makanan Indonesia yang terkenal ini.",
   keywords:
-    "Martabak Delivery,  Indonesian Food,  Martabak Flavors,  Toppings Variety,  Food Delivery App,  Culinary Experience,  Indonesian Cuisine, Food Ordering,  Online Food Delivery",
+    "Indonesian Food,  Martabak Flavors,  Toppings Variety,  Food Delivery App,  Culinary Experience,  Indonesian Cuisine, Food Ordering,  Online Food Delivery",
 };
 
 export default function RootLayout({
