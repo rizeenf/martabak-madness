@@ -34,7 +34,7 @@ const ProductId = async ({ params }: ParamsProps) => {
 
   return (
     <MaxWidthWrapper className="flex h-screen justify-center items-center">
-      <div className="flex flex-row mt-10">
+      <div className="flex flex-row mt-10 gap-10">
         <div className="left flex flex-1">
           <div className="relative aspect-square h-[30rem] w-[30rem] min-w-fit overflow-hidden rounded">
             {product.img && (
@@ -42,7 +42,8 @@ const ProductId = async ({ params }: ParamsProps) => {
                 src={product.img}
                 alt={product.title}
                 fill
-                className="absolute object-cover" />
+                className="absolute object-cover"
+              />
             )}
           </div>
         </div>

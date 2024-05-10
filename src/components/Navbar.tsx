@@ -10,6 +10,7 @@ import LeftNavbar from "./LeftNavbar";
 import MaxWidthWrapper from "./MaxWidthWrapper";
 import { Button } from "./ui/button";
 import Loading from "@/app/loading";
+import MyAccountNav from "./Account";
 
 const Navbar = () => {
   const { data, status } = useSession();
@@ -61,11 +62,7 @@ const Navbar = () => {
                   Orders
                 </Link>
                 <span className="w-px hidden sm:flex h-5 bg-amber-700" />
-                <Button
-                  className={cn(navigationMenuTriggerStyle(), "bg-amber-900 ")}
-                >
-                  Account
-                </Button>
+                <MyAccountNav user={data?.user} />
                 <span className="w-px hidden sm:flex h-5 bg-amber-700" />
                 <Button
                   onClick={handleLogout}

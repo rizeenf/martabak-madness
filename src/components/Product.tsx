@@ -1,7 +1,74 @@
-import React from "react";
+"use client"
+import { formatPrice } from "@/lib/utils";
+import Image from "next/image";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { ProductOptions } from "@/config/type";
+import { Skeleton } from "./ui/skeleton";
 
-const Product = () => {
-  return <div>Product</div>;
+type Product = {
+  id: string;
+  title: string;
+  desc?: string;
+  img?: string;
+  price: number;
+  options?: ProductOptions[];
+};
+
+const Product = ({ product, index }: { product: Product, index: number }) => {
+  const [isVisible, setIsVisible] = useState<boolean>(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, index * 200);
+
+    return () => clearTimeout(timer);
+  }, [index]);
+
+
+  if (!product || !isVisible) return <ProductPlaceholder />;
+
+  return <div key={product.id} className="flex flex-col gap-2 p-3 border border-gray-100 rounded group">
+    <Link href={`/product/${product.id}`} className="group-hover:opacity-85 flex flex-col gap-2">
+      <div className="relative aspect-square h-[16rem] w-[16rem] min-w-fit overflow-hidden rounded">
+        {product.img && (
+          <Image
+            alt={product.title}
+            src={product.img}
+            fill
+            className="absolute object-cover"
+          />
+        )}
+      </div>
+      <div className="flex flexrow justify-between">
+        <div>
+          <h1 className="font-semibold text-gray-700">{product.title}</h1>
+          <span className="font-medium text-sm text-gray-900">{formatPrice(product.price)}</span>
+        </div>
+        <Link href={`/product/${product.id}`}>
+          <Button>Beli</Button>
+        </Link>
+      </div>
+    </Link>
+  </div>;
 };
 
 export default Product;
+
+
+const ProductPlaceholder = () => {
+  return (
+    <div className="flex flex-col w-[16rem]">
+      <div className="relative bg-zinc-100 aspect-square w-full overflow-hidden rounded-xl">
+        <Skeleton className="h-full w-full" />
+      </div>
+      <Skeleton className="mt-4 w-2/3 h-4 rounded-lg" />
+      <div className="flex flex-row justify-between">
+        <Skeleton className="mt-2 w-16 h-4 rounded-lg" />
+        <Skeleton className="mt-2 w-12 h-8 rounded-lg" />
+      </div>
+    </div>
+  );
+};

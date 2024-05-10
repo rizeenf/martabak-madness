@@ -17,34 +17,6 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { MenuType } from "@/config/type";
 
-const components: {
-  title: string;
-  href: string;
-  src: string;
-  description: string;
-}[] = [
-    {
-      title: "Martabak Manis",
-      src: "/images/martabak1.jpeg",
-      href: "/menu/martabakmanis",
-      description:
-        "Nikmati Martabak Manis kami yang lezat, dengan lapisan tipis yang renyah dan penuh dengan berbagai pilihan topping manis seperti cokelat, keju, kacang, dan masih banyak lagi. Pesan sekarang dan rasakan kelezatannya!",
-    },
-    {
-      title: "Martabak Telor",
-      src: "/images/martelor1.jpeg",
-      href: "/menu/martabaktelor",
-      description:
-        "Sajian Martabak Telur kami adalah campuran sempurna dari telur, daging cincang, bawang, dan rempah-rempah yang disajikan dengan kulit tipis yang garing di luar dan lembut di dalam. Pesan sekarang dan nikmati sensasi gurihnya!",
-    },
-    {
-      title: "Martabak Kering",
-      src: "/images/markering1.jpeg",
-      href: "/menu/martabakkering",
-      description:
-        "Martabak Kering kami menghadirkan cita rasa khas Indonesia dengan adonan yang renyah dan isiannya yang lezat. Terdiri dari berbagai pilihan rasa tradisional seperti daging, keju, kacang, dan masih banyak lagi. Pesan sekarang dan rasakan kenikmatannya!",
-    },
-  ];
 
 const LeftNavbar = () => {
   const { data, isLoading, error } = useQuery<MenuType[]>({
@@ -55,8 +27,6 @@ const LeftNavbar = () => {
       ),
   });
 
-
-  console.log({ data })
 
   return (
     <NavigationMenu>
@@ -73,17 +43,18 @@ const LeftNavbar = () => {
                     className="flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
                     href="/"
                   >
+                    <div className="relative aspect-square h-[14rem] w-[14rem] min-w-fit overflow-hidden rounded">
                     <Image
                       src={"/images/makanan/nasi-uduk.jpeg"}
                       alt="Martabak"
-                      width={100}
-                      height={100}
-                      className="aspect-square object-cover"
-                    />
-                    <div className="mb-2 mt-4 text-lg font-medium">
-                      JualanMakanan
+                        fill
+                        className="absolute object-cover"
+                      />
                     </div>
-                    <p className="text-sm leading-tight text-muted-foreground line-clamp-6">
+                    <div className="mb-2 mt-4 text-lg font-bold text-center">
+                      Jualan Makanan
+                    </div>
+                    <p className="text-sm leading-tight text-justify text-muted-foreground line-clamp-6">
                       JualanMakanan adalah destinasi utama Anda untuk
                       menikmati dunia makanan yang lezat. Temukan beragam rasa
                       manis dan gurih, dengan berbagai pilihan topping yang
@@ -118,7 +89,7 @@ const LeftNavbar = () => {
                   <NavigationMenuLink asChild>
                     <Link
                       className="flex h-full w-full select-none flex-col  rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
-                      href={item.slug}
+                      href={`/menu/${item.slug}`}
                     >
                       <div className="relative aspect-square h-[10rem] w-[10rem] min-w-fit overflow-hidden rounded">
                         {item.img &&
@@ -133,7 +104,7 @@ const LeftNavbar = () => {
                       <div className="mb-2 mt-4 text-lg font-medium">
                         {item.title}
                       </div>
-                      <p className="text-sm leading-tight text-muted-foreground line-clamp-6">
+                      <p className="text-sm leading-tight text-justify text-muted-foreground line-clamp-4">
                         {item.desc}
                       </p>
                     </Link>
@@ -155,15 +126,7 @@ const LeftNavbar = () => {
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link href="/contact" legacyBehavior passHref>
-            <NavigationMenuLink
-              className={cn(navigationMenuTriggerStyle(), "bg-amber-900")}
-            >
-              Contact
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
+
       </NavigationMenuList>
     </NavigationMenu>
   );

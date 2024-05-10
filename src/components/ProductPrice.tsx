@@ -19,7 +19,7 @@ const ProductPrice = ({ product }: { product: Product }) => {
   const handleAddToCart = () => {
     addToCart({
       id: product.id,
-      price: product.price,
+      price: productPrice,
       quantity: quantity,
       title: product.title,
       image: product.img,
@@ -51,9 +51,9 @@ const ProductPrice = ({ product }: { product: Product }) => {
 
   return (
     <div className="right flex flex-col flex-1 w-full">
-      <h1 className="text-4xl font-semibold">{product.title}</h1>
-      <p>{product.desc}</p>
-      <h3 className="font-semibold text-xl">{formatPrice(productPrice)}</h3>
+      <h1 className="text-4xl font-semibold text-gray-700">{product.title}</h1>
+      <p className='mt-2 text-muted-foreground'>{product.desc}</p>
+      <h3 className="mt-3 font-semibold text-4xl text-gray-700">{formatPrice(productPrice)}</h3>
       <div className="flex flex-row gap-5">
         {product?.options?.map((item: ProductOptions, idx: number) => (
           <div key={item.type} className="p-2 ">
@@ -65,7 +65,6 @@ const ProductPrice = ({ product }: { product: Product }) => {
       </div>
       <div className="flex w-full flex-1 justify-between gap-5 items-center">
         <div className="flex flex-row w-full justify-between items-center">
-          <span>Quantity</span>
           <div className="flex flex-row gap-5 items-center">
             <Button onClick={() => setQuantity((prev) => prev <= 1 ? prev : prev - 1)}>-</Button>
             <span>{quantity}</span>
