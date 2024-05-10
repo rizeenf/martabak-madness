@@ -31,7 +31,7 @@ const Categories = async ({ params }: ParamsProps) => {
   return (
     <MaxWidthWrapper className="flex flex-row flex-wrap gap-5 items-center justify-evenly mt-10">
       {data?.map((product, idx) => (
-        <Product product={product} index={idx} />
+        <Product product={product} index={idx} key={idx} />
       ))}
     </MaxWidthWrapper>
   );
