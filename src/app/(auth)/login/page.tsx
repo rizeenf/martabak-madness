@@ -25,7 +25,7 @@ const Login = () => {
       <div className=" h-full shadow-2xl rounded-md flex flex-col md:flex-row md:h-[70%] md:w-full lg:w-[60%] 2xl:w-1/2">
         {/* IMAGE CONTAINER */}
         <div className="relative h-1/3 w-full md:h-full md:w-1/2">
-          <Image src="/images/martelor3.jpeg" alt="" fill className="object-cover" />
+          <Image src="/images/makanan/ayam-tepung.jpeg" alt="" fill className="object-cover" />
         </div>
         {/* FORM CONTAINER */}
         <div className="p-10 flex flex-col gap-8 md:w-1/2">

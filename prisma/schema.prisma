@@ -31,6 +31,8 @@ model Product {
   options      ProductOptions[]
   category     Category         @relation(fields: [categorySlug], references: [slug])
   categorySlug String
+  userEmail       String
+  user         User             @relation(fields: [userEmail], references: [email])
 }
 
 model ProductOptions {
@@ -41,13 +43,13 @@ model ProductOptions {
 }
 
 model Order {
-  id        String         @id @default(cuid())
-  createdAt DateTime       @default(now())
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
   price     Decimal
   products  Json[]
   status    String
-  intent_id String?        @unique
-  user      User           @relation(fields: [userEmail], references: [email])
+  intent_id String?  @unique
+  user      User     @relation(fields: [userEmail], references: [email])
   userEmail String
   productId String?
 }
@@ -88,7 +90,8 @@ model User {
   isAdmin       Boolean   @default(false)
   accounts      Account[]
   sessions      Session[]
-  Order         Order[]
+  orders         Order[]
+  products      Product[]
 }
 
 model VerificationToken {

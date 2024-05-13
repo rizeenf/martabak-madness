@@ -60,20 +60,29 @@ export const useCartStore = create<CartType & ActionType>()(
       },
       removeFromCart(item) {
         set((prev) => {
+          console.log(prev, "prev")
           const removedItem = prev.products.find((product) => product.id === item.id)
 
-          const updatedProducts = prev.products.filter((prod) => prod.id !== item.id)
+          let updatedProducts = prev.products.filter((prod) => prod.id !== item.id)
 
-
+          let updatedTotalItems = prev.totalItems;
           let updatedTotalPrice = prev.totalPrice;
+
           if (removedItem) {
-            updatedTotalPrice = updatedTotalPrice - (removedItem.price * removedItem.quantity)
+            updatedTotalPrice = updatedTotalPrice - (removedItem.price * removedItem.quantity);
+            updatedTotalItems -= 1
           }
 
-          // TO-DO FIX WHEN REMOVE
+          // If there's only one item left, reset the cart
+          if (updatedTotalItems == 0) {
+            updatedTotalPrice = 0;
+            updatedTotalItems = 0;
+            updatedProducts = [];
+          }
+
           return {
             products: updatedProducts,
-            totalItems: prev.totalItems - 1,
+            totalItems: updatedTotalItems,
             totalPrice: updatedTotalPrice
           }
 
