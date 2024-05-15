@@ -41,7 +41,8 @@ const ProductId = async ({ params }: ParamsProps) => {
               <Image
                 src={product.img}
                 alt={product.title}
-                fill
+                width={480}
+                height={480}
                 className="absolute object-cover"
               />
             )}

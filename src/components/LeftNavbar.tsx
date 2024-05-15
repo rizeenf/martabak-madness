@@ -96,7 +96,8 @@ const LeftNavbar = () => {
                           <Image
                           src={item.img}
                           alt="Martabak"
-                          fill
+                          width={160}
+                          height={160}
                           className="absolute object-cover"
                         />
                         }

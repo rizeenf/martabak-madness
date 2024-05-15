@@ -5,6 +5,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { ProductOptions } from "@/config/type";
+import { ShoppingCart } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 
 type Product = {
@@ -37,7 +38,8 @@ const Product = ({ product, index }: { product: Product, index: number }) => {
           <Image
             alt={product.title}
             src={product.img}
-            fill
+            width={256}
+            height={256}
             className="absolute object-cover"
           />
         )}
@@ -48,7 +50,9 @@ const Product = ({ product, index }: { product: Product, index: number }) => {
           <span className="font-medium text-sm text-gray-900">{formatPrice(product.price)}</span>
         </div>
         <Link href={`/product/${product.id}`}>
-          <Button>Beli</Button>
+          <Button>
+            <ShoppingCart className="h-5 w-5 flex-shrink-0 group-hover:opacity-80" /> +
+          </Button>
         </Link>
       </div>
     </Link>

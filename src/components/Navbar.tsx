@@ -44,7 +44,6 @@ const Navbar = () => {
     router.push('/login')
   }
 
-  console.log({ pathname })
   return (
     <div className="h-12 bg-amber-900 z-40 text-white">
       <MaxWidthWrapper className="h-12">

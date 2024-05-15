@@ -1,22 +1,33 @@
 'use client'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { cn } from '@/lib/utils'
-import { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from "@hookform/resolvers/zod"
-import { z } from 'zod'
+import MaxWidthWrapper from '@/components/MaxWidthWrapper';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from '@/lib/utils';
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle } from "lucide-react";
-import { useMutation } from '@tanstack/react-query'
-import { toast } from 'sonner'
-import { useSession } from 'next-auth/react'
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
+import { columns } from './columns';
+import { DataTable } from './data-table';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 const SellerDashboard = () => {
+  const router = useRouter();
   const [productDialog, setProductDialog] = useState(false)
   const { data: user, status } = useSession();
+  const queryClient = useQueryClient()
 
+  if (status === "unauthenticated") {
+    router.push("/");
+  }
 
   const formSchema = z.object({
     title: z.string().min(5, {
@@ -37,11 +48,24 @@ const SellerDashboard = () => {
 
   const {
     register,
+    setValue,
     handleSubmit,
-    formState: { errors, isLoading },
+    reset,
+    formState: { errors, isLoading, isSubmitting },
   } = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
+
+
+  const { data, isLoading: fetchLoading, error } = useQuery({
+    queryKey: ["sellProducts"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/sellProducts`).then((res) =>
+        res.json()
+      ),
+  });
+
+  console.log(data, 'data products')
 
   const mutation = useMutation({
     mutationFn: (
@@ -64,8 +88,9 @@ const SellerDashboard = () => {
       })
     },
     onSuccess: () => {
-      // queryClient.invalidateQueries({ queryKey: ["orders"] })
+      queryClient.invalidateQueries({ queryKey: ["sellProducts"] })
       toast.success('Success Insert Product.')
+      reset()
     }
   })
 
@@ -102,8 +127,26 @@ const SellerDashboard = () => {
     console.log({ errors })
   }
 
+
+  const handleChange = (e: string) => {
+    setValue("categories", e)
+    console.log(e)
+  }
+
+  const MyProducts = (
+    <div className={cn(!productDialog ? 'visible' : 'hidden', "w-4/5 fade-in-10 duration-150")}>
+      <Label htmlFor="products">My Products</Label>
+      <div className='container mx-auto py-5'>
+        {fetchLoading
+          ? <Skeleton className="w-full h-56 rounded-lg" />
+          : <DataTable columns={columns} data={data} />}
+      </div>
+    </div>
+  )
+
+
   const Dialog = (
-    <div className={cn(productDialog ? 'visible' : 'hidden')}>
+    <div className={cn(productDialog ? 'visible' : 'hidden', "w-4/5 fade-in-10 duration-150")}>
       <form onSubmit={handleSubmit(onSubmit, onErr)}>
         <div className="grid gap-2">
           <div className="grid gap-1 py-1">
@@ -138,13 +181,16 @@ const SellerDashboard = () => {
           </div>
           <div className="grid gap-1 py-1">
             <Label htmlFor="categories">Category</Label>
-            <Input
-              className={cn({
-                "focus-visible:ring-orange-500": errors.categories,
-              })}
-              placeholder="Makanan / Minuman / Cemilan"
-              {...register("categories")}
-            />
+            <Select onValueChange={handleChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="makanan">Makanan</SelectItem>
+                <SelectItem value="minuman">Minuman</SelectItem>
+                <SelectItem value="cemilan">Cemilan</SelectItem>
+              </SelectContent>
+            </Select>
             {errors?.categories && (
               <span className="text-xs text-rose-500">
                 {errors?.categories?.message}
@@ -157,7 +203,7 @@ const SellerDashboard = () => {
               className={cn({
                 "focus-visible:ring-orange-500": errors.image,
               })}
-              placeholder="/images/makanan/ayam-tepung.jpeg .. Sementara"
+              placeholder="https://i.pinimg.com/5e5db939712.jpg.. (Image link from pinterest, wikipedia, unsplash)"
               {...register("image")}
             />
             {errors?.image && (
@@ -172,7 +218,7 @@ const SellerDashboard = () => {
               className={cn({
                 "focus-visible:ring-orange-500": errors.options,
               })}
-              placeholder="Dibuat dari tepung pilihan dan ayam yang segar.."
+              placeholder="Kecil, Sedang, Besar.."
               {...register("options")}
             />
             {errors?.options && (
@@ -197,8 +243,8 @@ const SellerDashboard = () => {
               </span>
             )}
           </div>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? (
+          <Button type="submit" disabled={isSubmitting || isLoading}>
+            {isSubmitting || isLoading ? (
               <LoaderCircle className="w-3 h-3 animate-spin mr-1" />
             ) : null}
             Tambahkan
@@ -212,18 +258,36 @@ const SellerDashboard = () => {
 
   return (
     <>
-      <div>
+      <MaxWidthWrapper>
         <div>
-          <h1 className='text-4xl self-center items-center p-5'>
-            Seller Dashboard
-          </h1>
+          <div>
+            <h1 className='text-4xl self-center items-center p-5'>
+              Seller Dashboard
+            </h1>
+          </div>
         </div>
-        <Button className='m-5' onClick={() => setProductDialog(prev => !prev)}>
-          Add Product
-        </Button>
-      </div>
-      {Dialog}
+
+        <div className='flex flex-col md:flex-row gap-3'>
+          <div className='w-1/5 flex-row md:flex-col gap-3'>
+            <Button variant={"link"}
+              className='text-2xl flex-1'
+              onClick={() => setProductDialog(prev => !prev)} disabled={!productDialog} >
+              My Products
+            </Button>
+            <Button variant={"link"}
+              className='text-2xl flex-1'
+              onClick={() => setProductDialog(prev => !prev)} disabled={productDialog}>
+              Add Product
+            </Button>
+          </div>
+          <span className="w-px hidden md:flex h-64 bg-green-400 mx-5" />
+          <span className="w-48 flex md:hidden h-px bg-green-400 my-5" />
+          {MyProducts}
+          {Dialog}
+        </div>
+      </MaxWidthWrapper>
     </>
+
 
   )
 }

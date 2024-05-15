@@ -1,4 +1,7 @@
 "use client";
+import { User as UserIcon } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -7,18 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import Link from "next/link";
-import { User as UserIcon } from "lucide-react";
-import { useSession } from "next-auth/react";
-import { User } from "@/config/type";
-import Image from "next/image";
 
 const MyAccountNav = ({ user }: { user: any }) => {
-  // const { signOut } = useAuth();
-  const { data, status } = useSession();
-
-
-  console.log({ user })
 
   return (
     <DropdownMenu>
