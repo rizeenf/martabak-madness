@@ -48,7 +48,7 @@ const ProductPrice = ({ product }: { product: Product }) => {
       product.price)
 
     return () => { }
-  }, [quantity, productPrice, product.price, selectedOptions])
+  }, [quantity, productPrice, product.price, product.options, selectedOptions])
 
   return (
     <div className="right flex flex-col flex-1 w-full">
