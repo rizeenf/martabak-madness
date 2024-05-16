@@ -1,8 +1,21 @@
 "use client"
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, X } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table"
 import Link from "next/link";
 import { formatPrice } from "@/lib/utils";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -15,6 +28,10 @@ export type Payment = {
   categorySlug: "makanan" | "minuman" | "cemilan"
   rowIndex: number
 }
+
+
+
+
 export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "no",
@@ -53,10 +70,6 @@ export const columns: ColumnDef<Payment>[] = [
     header: () => <div className="text-right">Price</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("price"))
-      // const formatted = new Intl.NumberFormat("en-US", {
-      //   minimumFractionDigits: 2,
-      // }).format(amount)
-
       return <div className="text-right font-medium">{formatPrice(amount)}</div>
     },
   },
@@ -65,10 +78,53 @@ export const columns: ColumnDef<Payment>[] = [
     header: () => <div className="text-right">Details</div>,
     cell: ({ row }) => {
       const productId = row.original.id
+      const productTitle = row.original.title
+      const queryClient = useQueryClient()
 
-      return <Link href={`product/${productId}`} target="_blank" className="flex items-center justify-center" >
-        <ExternalLink className="w-5 h-5 opacity-80" />
-      </Link>
+      const mutation = useMutation({
+        mutationFn: (
+          { id }: { id: string }
+        ) => {
+          return fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/sell/${id}`, {
+            method: "DELETE",
+          })
+        },
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["sellProducts"] })
+          toast.success('Success remove product')
+        }
+      })
+
+      const handleRemoveProduct = (id: string) => {
+        mutation.mutate({
+          id: id
+        })
+
+      }
+
+      return <div className="flex flex-row items-center justify-center gap-3">
+        <Link href={`product/${productId}`} target="_blank" className="flex items-center justify-center" >
+          <ExternalLink className="w-5 h-5 opacity-80" />
+        </Link>
+        <AlertDialog>
+          <AlertDialogTrigger>
+            <X className="w-5 h-5 opacity-80" />
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure want to delete {productTitle}?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action will delete your selected product.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => handleRemoveProduct(row.original.id)}>Confirm</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+
+      </div>
 
     },
   },

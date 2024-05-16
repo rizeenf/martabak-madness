@@ -33,7 +33,7 @@ const SellerDashboard = () => {
 
   const isValidImageUrl = (url: string) => {
     try {
-      const { protocol, hostname } = new URL(url);
+      const { hostname } = new URL(url);
       return allowedImageSources.some(source => {
         const isHostnameValid = new RegExp(`^${source.hostname.replace('*.', '.*.')}$`).test(hostname);
         return isHostnameValid;
@@ -56,7 +56,6 @@ const SellerDashboard = () => {
     }),
     price: z.number(),
     isFeatured: z.boolean().nullable().default(false),
-    options: z.string().nullable(),
     categories: z.string(),
   })
 
@@ -215,28 +214,13 @@ const SellerDashboard = () => {
             )}
           </div>
           <div className="grid gap-1 py-1">
-            <Label htmlFor="options">Options</Label>
-            <Input
-              className={cn({
-                "focus-visible:ring-orange-500": errors.options,
-              })}
-              placeholder="Kecil, Sedang, Besar.."
-              {...register("options")}
-            />
-            {errors?.options && (
-              <span className="text-xs text-rose-500">
-                {errors?.options?.message}
-              </span>
-            )}
-          </div>
-          <div className="grid gap-1 py-1">
             <Label htmlFor="price">Harga</Label>
             <Input
               type='number'
               className={cn({
                 "focus-visible:ring-orange-500": errors.price,
               })}
-              placeholder="1000000"
+              placeholder="Rp 100.000"
               {...register("price", { valueAsNumber: true })}
             />
             {errors?.price && (
