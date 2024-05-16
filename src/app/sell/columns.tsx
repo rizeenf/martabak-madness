@@ -2,13 +2,14 @@
 import { ExternalLink } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table"
 import Link from "next/link";
+import { formatPrice } from "@/lib/utils";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Payment = {
   id: string
   price: number
-  desc: "pending" | "processing" | "success" | "failed"
+  desc: string
   title: string
   detail: string
   categorySlug: "makanan" | "minuman" | "cemilan"
@@ -31,21 +32,32 @@ export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "desc",
     header: "Description",
+    cell: ({ row }) => (
+      <div className="line-clamp-3">
+        {row.getValue("desc")}
+      </div>
+    ),
   },
   {
     accessorKey: "categorySlug",
     header: "Category",
+    cell: ({ row }) => (
+      <div className="capitalize">
+        {row.getValue("categorySlug")}
+      </div>
+    ),
+
   },
   {
     accessorKey: "price",
     header: () => <div className="text-right">Price</div>,
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("price"))
-      const formatted = new Intl.NumberFormat("en-US", {
-        minimumFractionDigits: 2,
-      }).format(amount)
+      // const formatted = new Intl.NumberFormat("en-US", {
+      //   minimumFractionDigits: 2,
+      // }).format(amount)
 
-      return <div className="text-right font-medium">{formatted}</div>
+      return <div className="text-right font-medium">{formatPrice(amount)}</div>
     },
   },
   {

@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { ProductOptions } from "@/config/type";
-import { ShoppingCart } from "lucide-react";
+import { ProductOptions, User } from "@/config/type";
+import { ShoppingCart, Store } from "lucide-react";
 import { Skeleton } from "./ui/skeleton";
 
 type Product = {
@@ -15,6 +15,7 @@ type Product = {
   img?: string;
   price: number;
   options?: ProductOptions[];
+  user: User;
 };
 
 const Product = ({ product, index }: { product: Product, index: number }) => {
@@ -31,7 +32,7 @@ const Product = ({ product, index }: { product: Product, index: number }) => {
 
   if (!product || !isVisible) return <ProductPlaceholder />;
 
-  return <div key={product.id} className="flex flex-col gap-2 p-3 border border-gray-100 rounded group">
+  return <div key={product.id} className="flex flex-col gap-2 p-2 border border-gray-100 rounded group shadow-md">
     <Link href={`/product/${product.id}`} className="group-hover:opacity-85 flex flex-col gap-2">
       <div className="relative aspect-square h-[16rem] w-[16rem] min-w-fit overflow-hidden rounded">
         {product.img && (
@@ -44,10 +45,14 @@ const Product = ({ product, index }: { product: Product, index: number }) => {
           />
         )}
       </div>
-      <div className="flex flexrow justify-between">
-        <div>
+      <div className="flex flexrow justify-between p-1">
+        <div className="flex flex-col gap-2">
           <h1 className="font-semibold text-gray-700">{product.title}</h1>
-          <span className="font-medium text-sm text-gray-900">{formatPrice(product.price)}</span>
+          <span className="font-medium text-xl text-gray-900">{formatPrice(product.price)}</span>
+          <div className="text-sm text-gray-600 flex flex-row gap-1 items-center">
+            <Store className="h-3 w-3" />
+            <span className="">{product?.user?.name}</span>
+          </div>
         </div>
         <Link href={`/product/${product.id}`}>
           <Button>

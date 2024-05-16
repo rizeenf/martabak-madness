@@ -12,6 +12,9 @@ export const GET = async (req: NextRequest) => {
         where: {
           userEmail: session.user.email!
         },
+        orderBy: {
+          createdAt: "desc"
+        }
       });
 
       return new NextResponse(JSON.stringify(products), { status: 200 });

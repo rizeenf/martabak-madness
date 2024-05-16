@@ -1,11 +1,7 @@
-import Loading from "@/app/loading";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import ProductPrice from "@/components/ProductPrice";
-import { Button } from "@/components/ui/button";
-import { Product, ProductOptions, singleProduct } from "@/config/type";
-import { useQuery } from "@tanstack/react-query";
+import { Product } from "@/config/type";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
 type ParamsProps = {
   params: {
     productId: string;

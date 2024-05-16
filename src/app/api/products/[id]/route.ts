@@ -13,7 +13,8 @@ export const GET = async (req: NextRequest, { params }: { params: { id: string }
       },
       include: {
         category: true,
-        options: true
+        options: true,
+        user: true
       }
     })
 

@@ -28,8 +28,10 @@ const Categories = async ({ params }: ParamsProps) => {
   const { categories } = params;
   const data: ProductTypes[] = await fetchData(categories);
 
+  console.log({ data })
+
   return (
-    <MaxWidthWrapper className="flex flex-row flex-wrap gap-5 items-center justify-evenly mt-10">
+    <MaxWidthWrapper className="flex flex-row flex-wrap gap-2 items-center justify-evenly mt-10">
       {data?.map((product, idx) => (
         <Product product={product} index={idx} key={idx} />
       ))}

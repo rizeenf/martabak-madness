@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { cn } from '@/lib/utils';
+import { allowedImageSources, cn } from '@/lib/utils';
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle } from "lucide-react";
@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { columns } from './columns';
 import { DataTable } from './data-table';
 import { Skeleton } from '@/components/ui/skeleton';
+import Loading from '../loading';
 
 
 const SellerDashboard = () => {
@@ -29,6 +30,20 @@ const SellerDashboard = () => {
     router.push("/");
   }
 
+
+  const isValidImageUrl = (url: string) => {
+    try {
+      const { protocol, hostname } = new URL(url);
+      return allowedImageSources.some(source => {
+        const isHostnameValid = new RegExp(`^${source.hostname.replace('*.', '.*.')}$`).test(hostname);
+        return isHostnameValid;
+      });
+    } catch {
+      return false;
+    }
+
+  }
+
   const formSchema = z.object({
     title: z.string().min(5, {
       message: "Title must be at least 5 characters.",
@@ -36,8 +51,8 @@ const SellerDashboard = () => {
     description: z.string().min(5, {
       message: "Description must be at least 5 characters.",
     }),
-    image: z.string().min(5, {
-      message: "Description must be at least 5 characters.",
+    image: z.string().refine(isValidImageUrl, {
+      message: "Invalid image URL. The URL must be from a permitted source.",
     }),
     price: z.number(),
     isFeatured: z.boolean().nullable().default(false),
@@ -65,18 +80,9 @@ const SellerDashboard = () => {
       ),
   });
 
-  console.log(data, 'data products')
 
   const mutation = useMutation({
     mutationFn: (
-      //   {
-      //   title,
-      //   desc,
-      //   img,
-      //   price,
-      //   categorySlug,
-      //   userEmail
-      // }: any
       data: any
     ) => {
       return fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/sell`, {
@@ -89,18 +95,11 @@ const SellerDashboard = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sellProducts"] })
-      toast.success('Success Insert Product.')
-      reset()
     }
   })
 
 
-
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log('awaw')
-    console.log(data, 'data')
-
-
     if (user) {
       try {
         await mutation.mutate({
@@ -109,10 +108,12 @@ const SellerDashboard = () => {
           img: data.image,
           price: data.price,
           categorySlug: data.categories,
-          userEmail: user.user.email! // Ensure userEmail is available
+          userEmail: user.user.email!
         });
 
-        // If mutation succeeds, you may perform additional actions here
+        setProductDialog(false)
+        toast.success('Success Add Product.')
+        reset()
 
       } catch (error) {
         console.error('Failed to update status:', error);
@@ -180,6 +181,7 @@ const SellerDashboard = () => {
             )}
           </div>
           <div className="grid gap-1 py-1">
+            {/* Can be fetch from category listing */}
             <Label htmlFor="categories">Category</Label>
             <Select onValueChange={handleChange}>
               <SelectTrigger>
@@ -243,9 +245,9 @@ const SellerDashboard = () => {
               </span>
             )}
           </div>
-          <Button type="submit" disabled={isSubmitting || isLoading}>
-            {isSubmitting || isLoading ? (
-              <LoaderCircle className="w-3 h-3 animate-spin mr-1" />
+          <Button type="submit" disabled={isSubmitting || isLoading || mutation.isPending}>
+            {isSubmitting || isLoading || mutation.isPending ? (
+              <LoaderCircle className="w-4 h-4 animate-spin mr-1" />
             ) : null}
             Tambahkan
           </Button>
@@ -255,6 +257,9 @@ const SellerDashboard = () => {
     </div>
   )
 
+  if (status == "loading") {
+    return <Loading />
+  }
 
   return (
     <>

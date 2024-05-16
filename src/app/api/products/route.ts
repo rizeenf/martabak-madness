@@ -10,6 +10,12 @@ export const GET = async (req: NextRequest) => {
       where: {
         ...(category && { categorySlug: category }),
       },
+      orderBy: {
+        createdAt: "desc"
+      },
+      include: {
+        user: true
+      }
     });
 
     return new NextResponse(JSON.stringify(products), { status: 200 });
