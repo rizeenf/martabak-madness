@@ -25,6 +25,7 @@ const SettingsPage = () => {
   const queryClient = useQueryClient()
 
   if (status === "unauthenticated") {
+    toast.error("Kamu belum login, silahkan login terlebih dahulu")
     router.push("/");
   }
 

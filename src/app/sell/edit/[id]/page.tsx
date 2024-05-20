@@ -1,4 +1,5 @@
 'use client'
+import Loading from '@/app/loading';
 import MaxWidthWrapper from '@/components/MaxWidthWrapper';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -27,11 +28,11 @@ type ParamsProps = {
 const EditPage = ({ params }: ParamsProps) => {
   const { id } = params;
   const router = useRouter();
-  const [productDialog, setProductDialog] = useState(false)
   const { data: user, status } = useSession();
   const queryClient = useQueryClient()
 
   if (status === "unauthenticated") {
+    toast.error("Kamu belum login, silahkan login terlebih dahulu")
     router.push("/");
   }
 
@@ -125,7 +126,6 @@ const EditPage = ({ params }: ParamsProps) => {
           price: data.price,
         });
 
-        setProductDialog(false)
         reset()
 
       } catch (error) {
@@ -158,6 +158,11 @@ const EditPage = ({ params }: ParamsProps) => {
     }
   }, [data, reset]);
 
+
+
+  if (status == "loading" || fetchLoading) {
+    return <Loading />
+  }
 
   return (
     <MaxWidthWrapper>
