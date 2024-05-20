@@ -19,10 +19,8 @@ const Navbar = () => {
 
   const handleLogout = () => {
     if (pathname == '/') {
-      toast.warning('Logout successfully')
       setTimeout(async () => {
         await signOut()
-
         return <Loading />
       }, 500)
     }
@@ -31,11 +29,12 @@ const Navbar = () => {
       // router.push('/')
       setTimeout(async () => {
         await signOut()
-        toast.warning('Logout successfully')
-
         return <Loading />
       }, 3000)
     }
+
+    toast.warning('Logout successfully')
+    window.localStorage.removeItem('cart-storage');
 
   }
 

@@ -4,6 +4,7 @@ import { formatPrice } from '@/lib/utils'
 import { useCartStore } from '@/utils/store'
 import { ImageIcon, X } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import React from 'react'
 
 const CartItem = ({ product }: { product: CartItemType }) => {
@@ -36,12 +37,16 @@ const CartItem = ({ product }: { product: CartItemType }) => {
           </div>
 
           <div className="flex flex-col self-start">
-            <span className="line-clamp-1 text-sm font-medium mb-1">
-              {product.title}
-            </span>
-            <span className="line-clamp-1 text-xs text-muted-foreground">
-              {product.quantity} x {formatPrice(product.price)}
-            </span>
+            <Link href={`/product/${product.id}`} className='hover:opacity-70'>
+              <span className="line-clamp-1 text-sm font-medium mb-1">
+                {product.title}
+              </span>
+            </Link>
+            <Link href={`/product/${product.id}`} className='hover:opacity-70'>
+              <span className="line-clamp-1 text-xs text-muted-foreground">
+                {product.quantity} x {formatPrice(product.price)}
+              </span>
+            </Link>
             <div className="mt-2 text-xs text-muted-foreground">
               <button
                 onClick={() => removeFromCart({

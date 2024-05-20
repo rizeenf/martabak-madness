@@ -18,6 +18,7 @@ import { columns } from './columns';
 import { DataTable } from './data-table';
 import { Skeleton } from '@/components/ui/skeleton';
 import Loading from '../loading';
+import Image from 'next/image';
 
 
 const SellerDashboard = () => {
@@ -64,6 +65,7 @@ const SellerDashboard = () => {
     register,
     setValue,
     handleSubmit,
+    watch,
     reset,
     formState: { errors, isLoading, isSubmitting },
   } = useForm<z.infer<typeof formSchema>>({
@@ -79,7 +81,7 @@ const SellerDashboard = () => {
       ),
   });
 
-
+  console.log({ data })
   const mutation = useMutation({
     mutationFn: (
       data: any
@@ -213,6 +215,17 @@ const SellerDashboard = () => {
               </span>
             )}
           </div>
+          {watch("image") && <div className="relative aspect-square h-[16rem] w-[16rem] min-w-fit overflow-hidden rounded">
+            {watch("image") && (
+              <Image
+                alt={watch("title")}
+                src={watch("image")}
+                width={256}
+                height={256}
+                className="absolute object-cover"
+              />
+            )}
+          </div>}
           <div className="grid gap-1 py-1">
             <Label htmlFor="price">Harga</Label>
             <Input

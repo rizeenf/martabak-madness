@@ -32,7 +32,7 @@ export default function RootLayout({
         <AuthProvider>
           <QueryProvider>
             <main className="flex flex-col min-h-screen relative">
-              <Toaster position="top-right" closeButton richColors duration={2000} />
+              <Toaster position="top-center" richColors duration={1500} />
               <Navbar />
               {children}
             </main>

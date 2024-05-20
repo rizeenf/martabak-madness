@@ -21,7 +21,7 @@ const MyAccountNav = ({ user }: { user: any }) => {
           Account
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-52 bg-white">
+      <DropdownMenuContent align="end" className="w-72 bg-white">
         <div className="flex relative items-center justify-start gap-2 p-2 ">
           <div className="flex space-y-0.5 leading-none items-center">
             <div className="relative aspect-square h-[3rem] w-[3rem] min-w-fit overflow-hidden rounded-full">
