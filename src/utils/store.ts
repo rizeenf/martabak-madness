@@ -58,9 +58,46 @@ export const useCartStore = create<CartType & ActionType>()(
           // }
         })
       },
+      addQuantity(item) {
+        set((prev) => {
+          const updatedProducts = prev.products.map((product) => {
+            if (product.id == item.id) {
+              return {
+                ...product,
+                quantity: product.quantity + 1
+              }
+            }
+            return product
+          })
+
+          return {
+            products: updatedProducts,
+            totalItems: prev.totalItems,
+            totalPrice: prev.totalPrice + +item.price
+          }
+        })
+      },
+      decreaseQuantity(item) {
+        set((prev) => {
+          const updatedProducts = prev.products.map((product) => {
+            if (product.id == item.id) {
+              return {
+                ...product,
+                quantity: product.quantity - 1
+              }
+            }
+            return product
+          }).filter(product => product.quantity > 0)
+
+          return {
+            products: updatedProducts,
+            totalItems: prev.totalItems - (updatedProducts.length < prev.products.length ? 1 : 0),
+            totalPrice: prev.totalPrice - item.price
+          }
+        })
+      },
       removeFromCart(item) {
         set((prev) => {
-          console.log(prev, "prev")
           const removedItem = prev.products.find((product) => product.id === item.id)
 
           let updatedProducts = prev.products.filter((prod) => prod.id !== item.id)
@@ -86,11 +123,11 @@ export const useCartStore = create<CartType & ActionType>()(
             totalPrice: updatedTotalPrice
           }
 
-        }
-        )
+        })
       },
-    }), {
-    name: "cart-storage",
-    storage: createJSONStorage(() => localStorage),
-  }
+    }),
+    {
+      name: "cart-storage",
+      storage: createJSONStorage(() => localStorage),
+    }
   ))

@@ -28,7 +28,8 @@ const SellerDashboard = () => {
   const queryClient = useQueryClient()
 
   if (status === "unauthenticated") {
-    router.push("/");
+    toast.error("Kamu belum login, silahkan login terlebih dahulu")
+    router.push("/login");
   }
 
 

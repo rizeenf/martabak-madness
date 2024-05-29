@@ -14,7 +14,7 @@ import { toast } from "sonner";
 
 const Page = () => {
   const router = useRouter();
-  const { products, totalPrice, removeFromCart } = useCartStore()
+  const { products, totalPrice, removeFromCart, decreaseQuantity, addQuantity } = useCartStore()
   const { data: user, status } = useSession();
 
   const [isMounted, setIsMounted] = useState<boolean>(false);
@@ -22,7 +22,7 @@ const Page = () => {
 
   if (status === "unauthenticated") {
     toast.error("Kamu belum login, silahkan login terlebih dahulu")
-    router.push("/");
+    router.push("/login");
   }
 
   useEffect(() => {
@@ -114,15 +114,44 @@ const Page = () => {
                             <h3 className="text-base">
                               <Link
                                 href={`/product/${product.id}`}
-                                className="font-medium text-gray-700 hover:text-gray-800 capitalize"
+                                className={"font-medium text-lg text-gray-700 hover:text-gray-500 capitalize"}
                               >
                                 {product.title}
                               </Link>
                             </h3>
+                            <p className=" mt-1 text-lg font-medium text-muted-foreground">
+                              {formatPrice(product.price)}
+                            </p>
                           </div>
-                          <p className=" mt-1 text-sm font-medium text-muted-foreground">
-                            {product.quantity} x {formatPrice(product.price)}
-                          </p>
+                          <div className="flex gap-5 items-center">
+                            <Button
+                              aria-label="Decrease Qty Product"
+                              variant={"ghost"}
+                              size={"sm"}
+                              onClick={() => decreaseQuantity({
+                                id: product.id,
+                                price: product.price,
+                                quantity: product.quantity,
+                                title: product.title,
+                                image: product.image,
+                              })}>
+                              -
+                            </Button>
+                            <p className="font-semibold text-xl text-muted-foreground">{product.quantity}</p>
+                            <Button
+                              aria-label="Increase Qty Product"
+                              variant={"ghost"}
+                              size={"sm"}
+                              onClick={() => addQuantity({
+                                id: product.id,
+                                price: product.price,
+                                quantity: product.quantity,
+                                title: product.title,
+                                image: product.image,
+                              })}>
+                              +
+                            </Button>
+                          </div>
                         </div>
 
                         <div className="mt-2 sm:mt-0 sm:pr-9 w-20">
@@ -147,7 +176,7 @@ const Page = () => {
                       <div className="mt-4 flex items-center space-x-2 text-sm text-gray-700">
                         <Check className="h-3 w-3 flex-shrink-0 text-green-500" />
                         <span className="text-xs text-muted-foreground">
-                          Instant delivery
+                          20 Minutes delivery
                         </span>
                       </div>
                     </div>
@@ -201,7 +230,7 @@ const Page = () => {
             </div>
             <div className="mt-6">
               <Button
-                disabled={(isMounted)}
+                // disabled={(isMounted)}
                 className="w-full"
                 size={"lg"}
               >

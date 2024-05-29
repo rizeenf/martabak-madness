@@ -25,7 +25,8 @@ const Orders = () => {
   });
 
   if (status === "unauthenticated") {
-    router.push("/");
+    toast.error("Kamu belum login, silahkan login terlebih dahulu")
+    router.push("/login");
   }
 
   const queryClient = useQueryClient()

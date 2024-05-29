@@ -33,7 +33,7 @@ const EditPage = ({ params }: ParamsProps) => {
 
   if (status === "unauthenticated") {
     toast.error("Kamu belum login, silahkan login terlebih dahulu")
-    router.push("/");
+    router.push("/login");
   }
 
   const { data, isLoading: fetchLoading, error } = useQuery({
