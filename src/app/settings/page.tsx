@@ -10,17 +10,25 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { LoaderCircle } from "lucide-react";
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { Skeleton } from '@/components/ui/skeleton';
 import Loading from '../loading';
+import { User } from '@/config/type';
+import { Textarea } from '@/components/ui/textarea';
+
+type inputMutation = {
+  name: string
+  address: string
+  phoneNo: string
+  email: string
+}
 
 
 const SettingsPage = () => {
   const router = useRouter();
-  const [productDialog, setProductDialog] = useState(false)
   const { data: user, status } = useSession();
   const queryClient = useQueryClient()
 
@@ -44,19 +52,16 @@ const SettingsPage = () => {
   }
 
   const formSchema = z.object({
-    title: z.string().min(5, {
-      message: "Title must be at least 5 characters.",
+    name: z.string().min(5, {
+      message: "Name must be at least 5 characters",
     }),
-    description: z.string().min(5, {
-      message: "Description must be at least 5 characters.",
+    email: z.string().email({ message: "Email is incorrect" }),
+    address: z.string({ message: "Alamat tidak boleh kosong" }).min(10, {
+      message: "Address must be at least 10 characters",
     }),
-    image: z.string().refine(isValidImageUrl, {
-      message: "Invalid image URL. The URL must be from a permitted source.",
+    phoneNo: z.string({ message: "Nomor telepon tidak boleh kosong" }).min(10, {
+      message: "Phone no is incorrect",
     }),
-    price: z.number(),
-    isFeatured: z.boolean().nullable().default(false),
-    options: z.string().nullable(),
-    categories: z.string(),
   })
 
 
@@ -71,10 +76,10 @@ const SettingsPage = () => {
   });
 
 
-  const { data, isLoading: fetchLoading, error } = useQuery({
-    queryKey: ["sellProducts"],
+  const { data, isLoading: fetchLoading, error } = useQuery<User>({
+    queryKey: ["user"],
     queryFn: () =>
-      fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/sellProducts`).then((res) =>
+      fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user`).then((res) =>
         res.json()
       ),
   });
@@ -82,10 +87,10 @@ const SettingsPage = () => {
 
   const mutation = useMutation({
     mutationFn: (
-      data: any
+      data: inputMutation
     ) => {
-      return fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/sell`, {
-        method: "POST",
+      return fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user`, {
+        method: "PUT",
         headers: {
           'Content-Type': 'application/json'
         },
@@ -93,7 +98,8 @@ const SettingsPage = () => {
       })
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["sellProducts"] })
+      queryClient.invalidateQueries({ queryKey: ["user"] })
+      toast.success('Success save account')
     }
   })
 
@@ -102,16 +108,12 @@ const SettingsPage = () => {
     if (user) {
       try {
         await mutation.mutate({
-          title: data.title,
-          desc: data.description,
-          img: data.image,
-          price: data.price,
-          categorySlug: data.categories,
-          userEmail: user.user.email!
+          name: data.name,
+          address: data.address,
+          email: data.email,
+          phoneNo: data.phoneNo
         });
 
-        setProductDialog(false)
-        toast.success('Success Add Product.')
         reset()
 
       } catch (error) {
@@ -120,116 +122,86 @@ const SettingsPage = () => {
       }
     }
 
-
   }
+
+  useEffect(() => {
+    if (data) {
+      reset({
+        name: data.name,
+        address: data.address,
+        email: data.email,
+        phoneNo: data.phoneNo
+      });
+    }
+  }, [data, reset]);
+
 
   const onErr = () => {
     console.log({ errors })
   }
 
-
-  const handleChange = (e: string) => {
-    setValue("categories", e)
-    console.log(e)
-  }
-
-
   const Dialog = (
-    <div className={cn(productDialog ? 'visible' : 'hidden', "w-4/5 fade-in-10 duration-150")}>
+    <div className={cn("w-4/5 fade-in-10 duration-150")}>
       <form onSubmit={handleSubmit(onSubmit, onErr)}>
         <div className="grid gap-2">
           <div className="grid gap-1 py-1">
-            <Label htmlFor="title">Title</Label>
-            <Input
+            <Label htmlFor="image">Address</Label>
+            <Textarea
               className={cn({
-                "focus-visible:ring-orange-500": errors.title,
+                "focus-visible:ring-orange-500": errors.address,
               })}
-              placeholder="Ayam bakar"
-              {...register("title")}
+              placeholder="Jalan Bintara 15, RT 006/004 No 182, Kelurahan Bintara"
+              {...register("address")}
             />
-            {errors?.title && (
+            {errors?.address && (
               <span className="text-xs text-rose-500">
-                {errors?.title?.message}
+                {errors?.address?.message}
               </span>
             )}
           </div>
           <div className="grid gap-1 py-1">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="title">Nama</Label>
             <Input
               className={cn({
-                "focus-visible:ring-orange-500": errors.description,
+                "focus-visible:ring-orange-500": errors.name,
               })}
-              placeholder="Dibuat dari tepung pilihan dan ayam yang segar.."
-              {...register("description")}
+              placeholder="Rizki Unsada"
+              {...register("name")}
             />
-            {errors?.description && (
+            {errors?.name && (
               <span className="text-xs text-rose-500">
-                {errors?.description?.message}
+                {errors?.name?.message}
               </span>
             )}
           </div>
           <div className="grid gap-1 py-1">
-            {/* Can be fetch from category listing */}
-            <Label htmlFor="categories">Category</Label>
-            <Select onValueChange={handleChange}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="makanan">Makanan</SelectItem>
-                <SelectItem value="minuman">Minuman</SelectItem>
-                <SelectItem value="cemilan">Cemilan</SelectItem>
-              </SelectContent>
-            </Select>
-            {errors?.categories && (
+            <Label htmlFor="description">Email</Label>
+            <Input
+              className={cn({
+                "focus-visible:ring-orange-500": errors.email,
+              })}
+              placeholder="rizkiunsada@gmail.com"
+              {...register("email")}
+            />
+            {errors?.email && (
               <span className="text-xs text-rose-500">
-                {errors?.categories?.message}
+                {errors?.email?.message}
               </span>
             )}
           </div>
+
           <div className="grid gap-1 py-1">
-            <Label htmlFor="image">Image</Label>
+            <Label htmlFor="options">No Telepon</Label>
             <Input
               className={cn({
-                "focus-visible:ring-orange-500": errors.image,
+                "focus-visible:ring-orange-500": errors.phoneNo,
               })}
-              placeholder="https://i.pinimg.com/5e5db939712.jpg.. (Image link from pinterest, wikipedia, unsplash)"
-              {...register("image")}
+              placeholder="+62877 8663 2385"
+              {...register("phoneNo")}
             />
-            {errors?.image && (
+            {errors?.phoneNo && (
               <span className="text-xs text-rose-500">
-                {errors?.image?.message}
-              </span>
-            )}
-          </div>
-          <div className="grid gap-1 py-1">
-            <Label htmlFor="options">Options</Label>
-            <Input
-              className={cn({
-                "focus-visible:ring-orange-500": errors.options,
-              })}
-              placeholder="Kecil, Sedang, Besar.."
-              {...register("options")}
-            />
-            {errors?.options && (
-              <span className="text-xs text-rose-500">
-                {errors?.options?.message}
-              </span>
-            )}
-          </div>
-          <div className="grid gap-1 py-1">
-            <Label htmlFor="price">Harga</Label>
-            <Input
-              type='number'
-              className={cn({
-                "focus-visible:ring-orange-500": errors.price,
-              })}
-              placeholder="1000000"
-              {...register("price", { valueAsNumber: true })}
-            />
-            {errors?.price && (
-              <span className="text-xs text-rose-500">
-                {errors?.price?.message}
+                {errors?.phoneNo?.message}
               </span>
             )}
           </div>
@@ -237,7 +209,7 @@ const SettingsPage = () => {
             {isSubmitting || isLoading || mutation.isPending ? (
               <LoaderCircle className="w-4 h-4 animate-spin mr-1" />
             ) : null}
-            Tambahkan
+            Simpan
           </Button>
         </div>
       </form>
@@ -262,14 +234,9 @@ const SettingsPage = () => {
           <div className='w-1/5 flex-row md:flex-col gap-3'>
             <Button variant={"link"}
               className='text-2xl flex-1'
-              onClick={() => setProductDialog(prev => !prev)} disabled={!productDialog} >
+              disabled >
               My Profile
             </Button>
-            {/* <Button variant={"link"}
-              className='text-2xl flex-1'
-              onClick={() => setProductDialog(prev => !prev)} disabled={productDialog}>
-              Add Product
-            </Button> */}
           </div>
           <span className="w-px hidden md:flex h-64 bg-green-400 mx-5" />
           <span className="w-48 flex md:hidden h-px bg-green-400 my-5" />

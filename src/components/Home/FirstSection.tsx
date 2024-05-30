@@ -26,15 +26,16 @@ const sections = [
 
 const FirstSection = () => {
   const [currentSlide, setCurrentSlide] = useState<number>(0);
+  const [fade, setFade] = useState<boolean>(true);
 
   useEffect(() => {
-    const interval = setInterval(
-      () =>
-        setCurrentSlide((prev) =>
-          prev === sections.length - 1 ? 0 : prev + 1
-        ),
-      4000
-    );
+    const interval = setInterval(() => {
+      setFade(false);
+      setTimeout(() => {
+        setCurrentSlide((prev) => (prev === sections.length - 1 ? 0 : prev + 1));
+        setFade(true);
+      }, 500);
+    }, 6000);
 
     return () => {
       clearInterval(interval);
@@ -44,10 +45,13 @@ const FirstSection = () => {
   return (
     <div
       className={cn(
-        "flex  min-h-screen h-full",
-        currentSlide % 2 == 0
+        "flex min-h-screen h-full",
+        currentSlide % 2 === 0
           ? "flex-col md:flex-row"
-          : "flex-col-reverse md:flex-row-reverse"
+          : "flex-col-reverse md:flex-row-reverse",
+        fade
+          ? "opacity-100 transform translate-x-0 transition-all duration-500 ease-in-out overflow-x-hidden"
+          : "opacity-0 transform translate-x-full transition-all duration-200 ease-in-out overflow-x-hidden"
       )}
     >
       <div className="left flex flex-1 flex-col gap-10 justify-center items-center px-10 sm:px-16">
@@ -55,7 +59,7 @@ const FirstSection = () => {
           {sections[currentSlide].title}
         </h1>
         <Button>
-          <Link href={"/menu"}>Order Now</Link>
+          <Link href={"/menu"}>Pesan Sekarang</Link>
         </Button>
       </div>
       <div className="right flex flex-1 justify-center items-center relative px-10 sm:px-16">

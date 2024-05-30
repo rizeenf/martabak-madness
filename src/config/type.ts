@@ -39,12 +39,14 @@ export type OrderType = {
 }
 
 export type User = {
-  id: String
-  name: String
-  email: String
-  emailVerified: String
-  image: String
-  isAdmin: Boolean
+  id: string
+  name: string
+  email: string
+  emailVerified: string
+  image: string
+  isAdmin: boolean
+  address: string
+  phoneNo: string
 
 }
 

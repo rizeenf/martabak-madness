@@ -7,6 +7,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
@@ -42,11 +43,18 @@ const MyAccountNav = ({ user }: { user: any }) => {
         </div>
 
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link href={"/settings"}>Account</Link>
+        <DropdownMenuLabel>
+          Akun
+        </DropdownMenuLabel>
+        <DropdownMenuItem asChild className="ml-2">
+          <Link href={"/settings"}>Pengaturan</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href={"/sell"}>Seller dashboard</Link>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>
+          Seller
+        </DropdownMenuLabel>
+        <DropdownMenuItem asChild className="ml-2">
+          <Link href={"/sell"}>Dashboard</Link>
         </DropdownMenuItem>
         {/* <DropdownMenuItem className="cursor-pointer" onClick={signOut}>
           Log out

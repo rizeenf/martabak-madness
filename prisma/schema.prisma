@@ -31,7 +31,7 @@ model Product {
   options      ProductOptions[]
   category     Category         @relation(fields: [categorySlug], references: [slug])
   categorySlug String
-  userEmail       String
+  userEmail    String
   user         User             @relation(fields: [userEmail], references: [email])
 }
 
@@ -88,9 +88,11 @@ model User {
   emailVerified DateTime?
   image         String?
   isAdmin       Boolean   @default(false)
+  phoneNo       String?
+  address       String?
   accounts      Account[]
   sessions      Session[]
-  orders         Order[]
+  orders        Order[]
   products      Product[]
 }
 
