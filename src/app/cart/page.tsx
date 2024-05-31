@@ -11,6 +11,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
 import { toast } from "sonner";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { User } from "@/config/type";
 
 const Page = () => {
   const router = useRouter();
@@ -24,6 +27,14 @@ const Page = () => {
     toast.error("Kamu belum login, silahkan login terlebih dahulu")
     router.push("/login");
   }
+
+  const { data, isLoading: fetchLoading, error } = useQuery<User>({
+    queryKey: ["user"],
+    queryFn: () =>
+      fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/user`).then((res) =>
+        res.json()
+      ),
+  });
 
   useEffect(() => {
     setIsMounted(true);
@@ -43,6 +54,26 @@ const Page = () => {
           Shopping cart
         </h1>
         <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-16">
+          <div className="col-span-7">
+            <Card>
+              <CardHeader>
+                <CardTitle>Alamat</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="font-semibold">{data?.name} | {data?.phoneNo}</p>
+              </CardContent>
+              <CardContent>
+                <p className="text-muted-foreground">{data?.address}</p>
+              </CardContent>
+              <CardContent>
+                <Button type="button" variant="link">
+                  <Link href={"/settings"}>Ubah alamat</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+        <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-16">
           <div
             className={cn("lg:col-span-7", {
               "rounded-lg border-dashed border-2 border-zinc-200 p-12":
@@ -50,6 +81,7 @@ const Page = () => {
             })}
           >
             <h2 className="sr-only">Items in your shopping cart</h2>
+
 
             {isMounted && products.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center space-y-1">
@@ -108,7 +140,7 @@ const Page = () => {
                       }
                     </div>
                     <div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
-                      <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+                      <div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-9 sm:pr-0">
                         <div>
                           <div className="flex justify-between">
                             <h3 className="text-base">

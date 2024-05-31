@@ -18,6 +18,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import Loading from '../loading';
 import { User } from '@/config/type';
 import { Textarea } from '@/components/ui/textarea';
+import { Separator } from '@/components/ui/separator';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 type inputMutation = {
   name: string
@@ -31,6 +33,7 @@ const SettingsPage = () => {
   const router = useRouter();
   const { data: user, status } = useSession();
   const queryClient = useQueryClient()
+  const [isAddressOpen, setIsAddressOpen] = useState<boolean>(false)
 
   if (status === "unauthenticated") {
     toast.error("Kamu belum login, silahkan login terlebih dahulu")
@@ -100,6 +103,7 @@ const SettingsPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user"] })
       toast.success('Success save account')
+      setIsAddressOpen(false)
     }
   })
 
@@ -144,12 +148,37 @@ const SettingsPage = () => {
     <div className={cn("w-4/5 fade-in-10 duration-150")}>
       <form onSubmit={handleSubmit(onSubmit, onErr)}>
         <div className="grid gap-2">
-          <div className="grid gap-1 py-1">
-            <Label htmlFor="image">Address</Label>
+          {data?.address
+            ? <>
+              <div className="grid gap-1 py-1">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Alamat</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>{data?.address}</p>
+                  </CardContent>
+                </Card>
+              </div>
+              <Button
+                type='button'
+                onClick={() => setIsAddressOpen(prev => !prev)}
+                variant={isAddressOpen ? "destructive" : "default"}>
+                {isAddressOpen ? "Batal" : "Ubah alamat"}
+              </Button>
+            </>
+            : <div className='grid gap-1 py-1'>
+              <Label htmlFor="address">Kamu belum memasukkan alamat</Label>
+              <Button type='button' onClick={() => setIsAddressOpen(true)}>Tambah Alamat</Button>
+            </div>
+          }
+          <div className={cn("grid gap-1 py-2 pl-2", isAddressOpen ? "" : "hidden")}>
+            <Label htmlFor="address">Address</Label>
             <Textarea
               className={cn({
                 "focus-visible:ring-orange-500": errors.address,
               })}
+              rows={5}
               placeholder="Jalan Bintara 15, RT 006/004 No 182, Kelurahan Bintara"
               {...register("address")}
             />
@@ -159,8 +188,12 @@ const SettingsPage = () => {
               </span>
             )}
           </div>
-          <div className="grid gap-1 py-1">
-            <Label htmlFor="title">Nama</Label>
+
+          <Separator className='my-10' />
+
+          <Label htmlFor="name" className='text-2xl'>Details</Label>
+          <div className="grid gap-1 py-1 pl-2">
+            <Label htmlFor="name">Nama</Label>
             <Input
               className={cn({
                 "focus-visible:ring-orange-500": errors.name,
@@ -174,8 +207,8 @@ const SettingsPage = () => {
               </span>
             )}
           </div>
-          <div className="grid gap-1 py-1">
-            <Label htmlFor="description">Email</Label>
+          <div className="grid gap-1 py-1 pl-2">
+            <Label htmlFor="email">Email</Label>
             <Input
               className={cn({
                 "focus-visible:ring-orange-500": errors.email,
@@ -190,8 +223,8 @@ const SettingsPage = () => {
             )}
           </div>
 
-          <div className="grid gap-1 py-1">
-            <Label htmlFor="options">No Telepon</Label>
+          <div className="grid gap-1 py-1 pl-2">
+            <Label htmlFor="phoneNo">No Telepon</Label>
             <Input
               className={cn({
                 "focus-visible:ring-orange-500": errors.phoneNo,
@@ -223,7 +256,7 @@ const SettingsPage = () => {
 
   return (
     <>
-      <MaxWidthWrapper>
+      <MaxWidthWrapper className='mb-10'>
         <div>
           <h1 className='text-4xl self-center items-center p-5'>
             Account Settings
