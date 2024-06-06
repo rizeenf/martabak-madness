@@ -125,6 +125,11 @@ export const useCartStore = create<CartType & ActionType>()(
 
         })
       },
+      resetCart() {
+        set(() => ({
+          ...INITIAL_STATE
+        }));
+      }    
     }),
     {
       name: "cart-storage",

@@ -75,12 +75,12 @@ const Cart = () => {
           </>
         ) : (
           <div className="flex h-full flex-col items-center justify-center space-y-1">
-            <span className="text-muted-foreground">Your cart is empty</span>
+              <span className="text-muted-foreground">Kamu belum memiliki pesanan.</span>
             <Link
               href="/menu"
               className={cn(buttonVariants({ variant: "link" }), "text-xs")}
             >
-              Add items to your cart
+                Pesan sekarang &rarr;
             </Link>
           </div>
         )}

@@ -30,7 +30,7 @@ export const POST = async (req: NextRequest) => {
     console.log(error)
     return new NextResponse(
       JSON.stringify({
-        message: "Something went wrong when adding orders."
+        message: "Something went wrong when adding product."
       }),
       { status: 500 }
     )

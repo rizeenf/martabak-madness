@@ -12,16 +12,29 @@ import { useEffect, useState } from "react";
 import Loading from "../loading";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "@/config/type";
+
+type Products = {
+  title: string
+  qty: number
+}
+
+type Orders = {
+  id?: string
+  price: number
+  userEmail?: string
+  products: Products[]
+}
 
 const Page = () => {
   const router = useRouter();
-  const { products, totalPrice, removeFromCart, decreaseQuantity, addQuantity } = useCartStore()
+  const { products, totalPrice, removeFromCart, decreaseQuantity, addQuantity, resetCart } = useCartStore()
   const { data: user, status } = useSession();
+  const queryClient = useQueryClient()
 
   const [isMounted, setIsMounted] = useState<boolean>(false);
-  const fee = 1000;
+  const fee: number = 1000;
 
   if (status === "unauthenticated") {
     toast.error("Kamu belum login, silahkan login terlebih dahulu")
@@ -36,6 +49,27 @@ const Page = () => {
       ),
   });
 
+  const mutation = useMutation({
+    mutationFn: (
+      data: Orders
+    ) => {
+      return fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/orders`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+    },
+    onSuccess: () => {
+      window.localStorage.removeItem('cart-storage');
+      resetCart()
+      queryClient.invalidateQueries({ queryKey: ["orders"] })
+      toast.success('Successfully Checkout')
+      router.push('/orders')
+    }
+  })
+
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -46,12 +80,34 @@ const Page = () => {
     return <Loading />
   }
 
+  const handleCheckout = async () => {
+    const product = products.map(
+      product => ({
+        title: product.title,
+        qty: product.quantity
+      })
+    )
+
+    if (user) {
+      try {
+        await mutation.mutate({
+          price: totalPrice + fee,
+          products: product
+        });
+
+      } catch (error) {
+        console.error('Failed to update status:', error);
+        toast.error('Failed updating status.');
+      }
+    }
+
+  }
 
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
         <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
-          Shopping cart
+          Keranjang belanja
         </h1>
         <div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-16">
           <div className="col-span-7">
@@ -85,18 +141,6 @@ const Page = () => {
 
             {isMounted && products.length === 0 ? (
               <div className="flex h-full flex-col items-center justify-center space-y-1">
-                <div
-                  aria-hidden="true"
-                  className="relative mb-4 h-40 w-40 text-muted-foreground"
-                >
-                  <Image
-                    src={"https://i.pinimg.com/originals/78/11/7a/78117a9617236551314ad9b3a378be2c.jpg"}
-                    fill
-                    loading="eager"
-                    className="object-contain flex-shrink-0 opacity-60"
-                    alt="Empty shopping cart"
-                  />
-                </div>
                 <h3 className="font-semibold text-xl">Keranjang kosong.</h3>
                 <p className="text-sm text-muted-foreground text-center">
                   Yahh, Keranjang kamu masih kosong.
@@ -105,7 +149,7 @@ const Page = () => {
                   href="/menu"
                   className={cn(buttonVariants({ variant: "link" }), "text-xs")}
                 >
-                  Cari makanan dulu
+                  Pesan sekarang &rarr;
                 </Link>
               </div>
             ) : null}
@@ -208,7 +252,7 @@ const Page = () => {
                       <div className="mt-4 flex items-center space-x-2 text-sm text-gray-700">
                         <Check className="h-3 w-3 flex-shrink-0 text-green-500" />
                         <span className="text-xs text-muted-foreground">
-                          20 Minutes delivery
+                          20 menit pengantaran
                         </span>
                       </div>
                     </div>
@@ -220,7 +264,7 @@ const Page = () => {
           </div>
 
           <section className="mt-16 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8">
-            <h2 className="text-lg font-medium text-gray-900">Order summary</h2>
+            <h2 className="text-lg font-medium text-gray-900">Ringkasan pembayaran</h2>
             <div className="mt-6 space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-sm text-gray-600">Subtotal</p>
@@ -235,7 +279,7 @@ const Page = () => {
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <div className="flex items-center text-sm text-muted-foreground">
                   <span className="text-muted-foreground ">
-                    Flat transaction fee
+                    Biaya admin
                   </span>
                 </div>
                 <div className="text-sm font-medium text-gray-900">
@@ -249,7 +293,7 @@ const Page = () => {
 
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <span className="text-base font-medium text-gray-900">
-                  Order total
+                  Total pesanan
                 </span>
                 <span className="text-base font-medium text-gray-900">
                   {isMounted ? (
@@ -265,8 +309,9 @@ const Page = () => {
                 // disabled={(isMounted)}
                 className="w-full"
                 size={"lg"}
+                onClick={handleCheckout}
               >
-                Checkout
+                Lanjutkan pembayaran
               </Button>
             </div>
           </section>

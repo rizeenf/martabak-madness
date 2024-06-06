@@ -31,6 +31,9 @@ export const GET = async (req: NextRequest) => {
         }
       });
       return new NextResponse(JSON.stringify(orders), { status: 200 });
+
+
+
     } else {
       return new NextResponse(
         JSON.stringify({
@@ -39,6 +42,7 @@ export const GET = async (req: NextRequest) => {
         { status: 401 }
       );
     }
+
   } catch (error) {
     return new NextResponse(
       JSON.stringify({
@@ -46,5 +50,38 @@ export const GET = async (req: NextRequest) => {
       }),
       { status: 500 }
     );
+  }
+};
+
+export const POST = async (req: NextRequest) => {
+  const session = await getAuthSession()
+  const body = await req.json()
+
+  try {
+    if (session) {
+      const createdOrder = await prisma.order.create({
+        data: {
+          status: 'Prepared',
+          price: body.price,
+          createdAt: new Date(),
+          userEmail: session?.user.email!,
+          products: body.products,
+        },
+      })
+
+      return new NextResponse(
+        JSON.stringify(createdOrder),
+        { status: 200 }
+      )
+    }
+  } catch (error) {
+    console.log(error)
+    return new NextResponse(
+      JSON.stringify({
+        message: "Something went wrong when adding orders."
+      }),
+      { status: 500 }
+    )
+
   }
 };

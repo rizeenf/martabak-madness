@@ -71,6 +71,7 @@ export type ActionType = {
   addQuantity: (item: CartItemType) => void
   decreaseQuantity: (item: CartItemType) => void
   removeFromCart: (item: CartItemType) => void
+  resetCart: () => void
 }
 
 
