@@ -20,7 +20,7 @@ type Products = {
   qty: number
 }
 
-type Orders = {
+export type Orders = {
   id?: string
   price: number
   userEmail?: string
@@ -36,7 +36,7 @@ const Page = () => {
   const [isMounted, setIsMounted] = useState<boolean>(false);
   const fee: number = 1000;
 
-  if (status === "unauthenticated") {
+  if (status === "unauthenticated" && isMounted) {
     toast.error("Kamu belum login, silahkan login terlebih dahulu")
     router.push("/login");
   }
@@ -62,7 +62,12 @@ const Page = () => {
       })
     },
     onSuccess: () => {
-      window.localStorage.removeItem('cart-storage');
+      // window.localStorage.removeItem('cart-storage');
+      if (typeof window !== 'undefined') {
+        // Your browser-specific code here
+        // console.log(window.location.href);
+        localStorage.removeItem('cart-storage');
+      }
       resetCart()
       queryClient.invalidateQueries({ queryKey: ["orders"] })
       toast.success('Successfully Checkout')
@@ -90,10 +95,12 @@ const Page = () => {
 
     if (user) {
       try {
-        await mutation.mutate({
-          price: totalPrice + fee,
-          products: product
-        });
+        // await mutation.mutate({
+        //   price: totalPrice + fee,
+        //   products: product
+        // });
+        router.push('/cart/payment')
+
 
       } catch (error) {
         console.error('Failed to update status:', error);
