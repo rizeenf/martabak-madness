@@ -42,10 +42,6 @@ const PaymentPage = () => {
     router.push("/login");
   }
 
-  if (products.length < 1) {
-    toast.error("Kamu belum memiliki pesanan, silahkan belanja terlebih dahulu")
-    router.push("/cart");
-  }
 
   const {
     register,
@@ -158,6 +154,10 @@ const PaymentPage = () => {
     return <Loading />
   }
 
+  if (products.length < 1) {
+    // toast.error("Kamu belum memiliki pesanan, silahkan belanja terlebih dahulu")
+    router.push("/cart");
+  }
 
 
   return (
