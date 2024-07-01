@@ -32,10 +32,26 @@ const PaymentPage = () => {
   const { data: user, status } = useSession();
   const queryClient = useQueryClient()
   const fee: number = 1000;
+  const [vat, setVat] = useState<number>(0)
+  const [ongkir, setOngkir] = useState<number>(0)
+
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (totalPrice < 100000) {
+      setOngkir(10000)
+    } else if (totalPrice >= 100000 && totalPrice < 200000) {
+      setOngkir(30000)
+    } else {
+      setOngkir(50000)
+    }
+
+    setVat(totalPrice * 0.11)
+
+  }, [totalPrice])
 
   if (status === "unauthenticated" && isMounted) {
     toast.error("Kamu belum login, silahkan login terlebih dahulu")
@@ -190,12 +206,20 @@ const PaymentPage = () => {
               <span>{formatPrice(totalPrice)}</span>
             </div>
             <div className='flex justify-between text-muted-foreground'>
-              <span>Biaya Admin</span>
+              <span>PPN (11%)</span>
+              <span>{formatPrice(vat)}</span>
+            </div>
+            <div className='flex justify-between text-muted-foreground'>
+              <span>Ongkos kirim</span>
+              <span>{formatPrice(ongkir)}</span>
+            </div>
+            <div className='flex justify-between text-muted-foreground'>
+              <span>Biaya aplikasi</span>
               <span>{formatPrice(+1000)}</span>
             </div>
             <div className='flex justify-between font-semibold'>
               <span>Total bayar</span>
-              <span>{formatPrice(totalPrice + +1000)}</span>
+              <span>{formatPrice(totalPrice + +1000 + +vat + +ongkir)}</span>
             </div>
           </div>
 

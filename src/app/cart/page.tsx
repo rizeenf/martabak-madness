@@ -34,6 +34,8 @@ const Page = () => {
   const queryClient = useQueryClient()
 
   const [isMounted, setIsMounted] = useState<boolean>(false);
+  const [vat, setVat] = useState<number>(0)
+  const [ongkir, setOngkir] = useState<number>(0)
   const fee: number = 1000;
 
   if (status === "unauthenticated" && isMounted) {
@@ -77,7 +79,21 @@ const Page = () => {
 
   useEffect(() => {
     setIsMounted(true);
+
   }, []);
+
+  useEffect(() => {
+    if (totalPrice < 100000) {
+      setOngkir(10000)
+    } else if (totalPrice >= 100000 && totalPrice < 200000) {
+      setOngkir(30000)
+    } else {
+      setOngkir(50000)
+    }
+
+    setVat(totalPrice * 0.11)
+
+  }, [totalPrice])
 
   console.log({ products })
 
@@ -283,10 +299,41 @@ const Page = () => {
                   )}
                 </p>
               </div>
+
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <div className="flex items-center text-sm text-muted-foreground">
                   <span className="text-muted-foreground ">
-                    Biaya admin
+                    PPN (11%)
+                  </span>
+                </div>
+                <div className="text-sm font-medium text-gray-900">
+                  {isMounted ? (
+                    formatPrice(vat)
+                  ) : (
+                    <Shell className="animate-spin text-rose-200 h-5 w-5" />
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="text-muted-foreground ">
+                    Ongkos kirim
+                  </span>
+                </div>
+                <div className="text-sm font-medium text-gray-900">
+                  {isMounted ? (
+                    formatPrice(ongkir)
+                  ) : (
+                    <Shell className="animate-spin text-rose-200 h-5 w-5" />
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+                <div className="flex items-center text-sm text-muted-foreground">
+                  <span className="text-muted-foreground ">
+                    Biaya aplikasi
                   </span>
                 </div>
                 <div className="text-sm font-medium text-gray-900">
@@ -300,11 +347,11 @@ const Page = () => {
 
               <div className="flex items-center justify-between border-t border-gray-200 pt-4">
                 <span className="text-base font-medium text-gray-900">
-                  Total pesanan
+                  Total pembayaran
                 </span>
                 <span className="text-base font-medium text-gray-900">
                   {isMounted ? (
-                    formatPrice(totalPrice + +fee)
+                    formatPrice(totalPrice + +fee + +vat + +ongkir)
                   ) : (
                     <Shell className="animate-spin text-rose-200 h-7 w-7" />
                   )}

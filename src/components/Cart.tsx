@@ -46,11 +46,7 @@ const Cart = () => {
             <div className="w-full text-sm my-2">
               <Separator />
               <div className="flex">
-                <span className="flex-1">Shipping</span>
-                <span>Free</span>
-              </div>
-              <div className="flex">
-                <span className="flex-1">Transaction Fee</span>
+                <span className="flex-1">Biaya aplikasi</span>
                 {formatPrice(1000)}
               </div>
               <div className="flex">
