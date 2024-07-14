@@ -172,7 +172,7 @@ const PaymentPage = () => {
 
   if (products.length < 1) {
     // toast.error("Kamu belum memiliki pesanan, silahkan belanja terlebih dahulu")
-    router.push("/cart");
+    // router.push("/cart");
   }
 
 

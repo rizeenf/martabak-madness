@@ -8,7 +8,7 @@ import React from "react";
 import { toast } from "sonner";
 
 const Login = () => {
-  const { status } = useSession();
+  const { status, data } = useSession();
   const router = useRouter();
 
   if (status === "loading") {
@@ -16,7 +16,7 @@ const Login = () => {
   }
   if (status === "authenticated") {
     router.push("/")
-    toast.success('Login successfully')
+    toast.success(`Login successfully, welcome ${data?.user?.name}.`)
   }
 
   return (
